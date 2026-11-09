@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Signing in… — NFlashX</title>
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/styles.css?v=18">
+<style>
+  body{display:grid;place-items:center;min-height:100vh}
+  .cb{ text-align:center; color:var(--mut); font-size:14px }
+  .cb .spin{width:46px;height:46px;border-radius:50%;border:3px solid rgba(37,227,154,.15);border-top-color:var(--green);
+    animation:spin 1s linear infinite;margin:0 auto 18px}
+  .cb b{color:#fff;font-family:var(--font-head);font-size:20px;display:block;margin-bottom:8px}
+  .cb .err{color:#ffb1b1;background:rgba(255,90,90,.1);border:1px solid rgba(255,90,90,.35);
+    border-radius:10px;padding:12px 18px;display:inline-block;margin-top:10px}
+  .cb a{color:#8df0c4}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="aurora"><i></i><i></i><i></i></div>
+<div class="grain"></div>
+<div class="cb">
+  <div class="spin"></div>
+  <b>Signing you in…</b>
+  <span id="msg">Finishing the provider handshake, one moment.</span>
+  <div id="extra"></div>
+</div>
+<script>
+(async () => {
+  const q = new URLSearchParams(location.search);
+  const token = q.get('token'), error = q.get('error');
+  if (error) {
+    document.querySelector('.spin').style.display = 'none';
+    document.querySelector('b').textContent = 'Sign-in failed';
+    document.getElementById('msg').textContent = '';
+    document.getElementById('extra').innerHTML = '<span class="err">' + error + '</span><br><br><a href="login.html">Back to sign in</a>';
+    return;
+  }
+  if (!token) { location.replace('login.html'); return; }
+  try {
+    const r = await fetch('/api/auth/me', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token })
+    }).then(x => x.json());
+    if (!r.ok) throw new Error(r.error || 'Session error');
+    localStorage.setItem('nfx_session', JSON.stringify({ token, email: r.user.email, name: r.user.name, apiKey: r.user.api_key }));
+    document.getElementById('msg').textContent = 'Welcome, ' + r.user.name + ' — redirecting to your API keys…';
+    setTimeout(() => location.replace('platform.html'), 900);
+  } catch (e) {
+    document.querySelector('.spin').style.display = 'none';
+    document.querySelector('b').textContent = 'Sign-in failed';
+    document.getElementById('msg').textContent = '';
+    document.getElementById('extra').innerHTML = '<span class="err">' + e.message + '</span><br><br><a href="login.html">Back to sign in</a>';
+  }
+})();
+</script>
+<script src="js/app.js?v=17"></script>
+</body>
+</html>

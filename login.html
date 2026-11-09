@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in — NFlashX API Platform</title>
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css?v=18">
+</head>
+<body>
+<div class="auth-wrap">
+
+  <!-- ============ LEFT : FORM ============ -->
+  <section class="auth-form-panel">
+    <div class="auth-top">
+      <a class="auth-brandline" href="index.html">
+        <img src="assets/logo.svg" alt="NFlashX">
+        NFlashX <span class="sep">|</span> <span class="sub">API Platform</span>
+      </a>
+      <a class="auth-lang" href="#">EN <span style="font-size:10px">↗</span></a>
+    </div>
+
+    <div class="auth-card">
+      <!-- ============ PASSWORD RESET ============ -->
+      <div id="paneReset" style="display:none">
+        <h1>Reset Password</h1>
+        <div class="auth-err" id="errReset"></div>
+        <div class="auth-note" id="noteReset" style="display:none"></div>
+        <form id="formReset" novalidate>
+          <div class="field-g">
+            <label for="rsEmail">Email</label>
+            <input id="rsEmail" type="email" placeholder="Your account email" autocomplete="email">
+          </div>
+          <div class="field-g" id="rsCodeRow" style="display:none">
+            <label for="rsCode">6-digit code</label>
+            <input id="rsCode" inputmode="numeric" maxlength="6" placeholder="••••••" autocomplete="one-time-code">
+          </div>
+          <div class="field-g" id="rsPassRow" style="display:none">
+            <label for="rsPass">New password</label>
+            <input id="rsPass" type="password" placeholder="At least 6 characters" autocomplete="new-password">
+          </div>
+          <button class="btn-signin" type="submit" id="btnReset">Send reset code</button>
+        </form>
+        <p class="auth-alt"><a href="#" id="backSignin">← Back to sign in</a></p>
+      </div>
+
+      <!-- ============ SIGN IN ============ -->
+      <div id="paneSignin">
+        <h1>Welcome</h1>
+        <div class="auth-err" id="errSignin"></div>
+        <form id="formSignin" novalidate>
+          <div class="field-g">
+            <label for="siEmail">Email</label>
+            <input id="siEmail" type="email" placeholder="Email" autocomplete="email">
+          </div>
+          <div class="field-g">
+            <label for="siPass">Password <a href="#" id="linkForgot">Forgot Password</a></label>
+            <input id="siPass" type="password" placeholder="Please enter your password" autocomplete="current-password">
+            <button type="button" class="pw-toggle" data-for="siPass" aria-label="Show password">👁</button>
+          </div>
+          <button class="btn-signin" type="submit" id="btnSignin">Sign In</button>
+        </form>
+        <p class="auth-alt">Don't have an account? <a href="#" id="gotoSignup">Sign Up</a></p>
+        <div class="auth-or">OR</div>
+        <button class="btn-oauth" data-provider="Google">
+          <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M23.5 12.3c0-.9-.1-1.5-.3-2.2H12v4.1h6.5c-.1 1.1-.8 2.7-2.4 3.8l3.7 2.9c2.3-2.1 3.7-5.1 3.7-8.6z"/><path fill="#34A853" d="M12 24c3.2 0 5.9-1.1 7.9-2.9l-3.7-2.9c-1 .7-2.4 1.2-4.2 1.2-3.2 0-5.9-2.1-6.9-5.1L1.3 17.2C3.3 21.2 7.3 24 12 24z"/><path fill="#FBBC05" d="M5.1 14.3c-.2-.7-.4-1.5-.4-2.3s.1-1.6.4-2.3L1.3 6.8C.5 8.4 0 10.1 0 12s.5 3.6 1.3 5.2l3.8-2.9z"/><path fill="#EA4335" d="M12 4.7c1.8 0 3 .8 3.7 1.4l3.3-3.2C17.9 1.1 15.2 0 12 0 7.3 0 3.3 2.8 1.3 6.8l3.8 2.9c1-3 3.7-5 6.9-5z"/></svg>
+          Continue with Google
+        </button>
+        <button class="btn-oauth" data-provider="Github">
+          <svg viewBox="0 0 24 24" fill="#14181d"><path d="M12 .3a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2 0 1.9 1.2 1.9 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0C17.3 4.6 18.3 5 18.3 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0012 .3z"/></svg>
+          Continue with Github
+        </button>
+      </div>
+
+      <!-- ============ SIGN UP ============ -->
+      <div id="paneSignup" style="display:none">
+        <h1>Create your account</h1>
+        <div class="auth-err" id="errSignup"></div>
+        <form id="formSignup" novalidate>
+          <div class="field-g">
+            <label for="suName">Full name</label>
+            <input id="suName" type="text" placeholder="Your name" autocomplete="name">
+          </div>
+          <div class="field-g">
+            <label for="suEmail">Email</label>
+            <input id="suEmail" type="email" placeholder="Email" autocomplete="email">
+          </div>
+          <div class="field-g">
+            <label for="suPass">Password</label>
+            <input id="suPass" type="password" placeholder="At least 6 characters" autocomplete="new-password">
+            <button type="button" class="pw-toggle" data-for="suPass" aria-label="Show password">👁</button>
+          </div>
+          <div class="field-g">
+            <label for="suPass2">Confirm password</label>
+            <input id="suPass2" type="password" placeholder="Re-enter your password" autocomplete="new-password">
+          </div>
+          <button class="btn-signin" type="submit" id="btnSignup">Create account</button>
+        </form>
+        <p class="auth-alt">Already have an account? <a href="#" id="gotoSignin">Sign In</a></p>
+        <div class="auth-or">OR</div>
+        <button class="btn-oauth" data-provider="Google">
+          <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M23.5 12.3c0-.9-.1-1.5-.3-2.2H12v4.1h6.5c-.1 1.1-.8 2.7-2.4 3.8l3.7 2.9c2.3-2.1 3.7-5.1 3.7-8.6z"/><path fill="#34A853" d="M12 24c3.2 0 5.9-1.1 7.9-2.9l-3.7-2.9c-1 .7-2.4 1.2-4.2 1.2-3.2 0-5.9-2.1-6.9-5.1L1.3 17.2C3.3 21.2 7.3 24 12 24z"/><path fill="#FBBC05" d="M5.1 14.3c-.2-.7-.4-1.5-.4-2.3s.1-1.6.4-2.3L1.3 6.8C.5 8.4 0 10.1 0 12s.5 3.6 1.3 5.2l3.8-2.9z"/><path fill="#EA4335" d="M12 4.7c1.8 0 3 .8 3.7 1.4l3.3-3.2C17.9 1.1 15.2 0 12 0 7.3 0 3.3 2.8 1.3 6.8l3.8 2.9c1-3 3.7-5 6.9-5z"/></svg>
+          Continue with Google
+        </button>
+        <button class="btn-oauth" data-provider="Github">
+          <svg viewBox="0 0 24 24" fill="#14181d"><path d="M12 .3a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2 0 1.9 1.2 1.9 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0C17.3 4.6 18.3 5 18.3 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0012 .3z"/></svg>
+          Continue with Github
+        </button>
+      </div>
+    </div>
+  </section>
+      <div id="verifyBox" style="display:none">
+        <p style="text-align:center;font-size:13.5px;color:#4a545f;line-height:1.6;margin-bottom:14px">
+          Enter the 6-digit code we sent to<br><b id="vEmail" style="color:#0c1014">—</b>
+        </p>
+        <div class="auth-err" id="errVerify"></div>
+        <input id="vCode" inputmode="numeric" maxlength="6" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;"
+               style="width:100%;text-align:center;font-family:'JetBrains Mono',monospace;font-size:22px;letter-spacing:10px;
+                      padding:12px;border-radius:10px;border:1px solid #dfe4ea;background:#f3f5f8;outline:0;margin-bottom:12px;box-sizing:border-box">
+        <button class="btn-signin" id="btnVerify" type="button">Verify email</button>
+        <button class="btn-signin" id="btnResend" type="button" style="background:#fff;color:#4a545f;border:1px solid #dfe4ea;margin-top:10px;font-size:13px" disabled>Resend code (45s)</button>
+      </div>
+
+
+  <!-- ============ RIGHT : BRAND ============ -->
+  <aside class="auth-brand">
+    <div class="ab-logo"><img src="assets/logo.svg" alt=""> NFlashX</div>
+    <p class="ab-tag"><b>AI Parity for the 99%</b><br>Inclusion and Accessibility for All</p>
+    <div class="ab-h"><span>From a Global Top 10 AI Lab</span><span>Free Access to Frontier Models</span></div>
+
+    
+   
+    <div class="ab-mview">
+      <div class="ab-track">
+        <article class="lb-card"><header><h4>Artificial Analysis Intelligence Index</h4><span class="lb-tag">Text model</span></header><p class="lb-sub">Index V5.0.1 incorporates 10 evaluations</p><div class="lb-bars"><div class="lb-bar"><span class="who">O</span><span class="sc">57</span><div class="bar" style="--hp:170px"><span class="vname">GPT-6.1 Sol</span></div><span class="og">OpenAI</span></div><div class="lb-bar"><span class="who">K</span><span class="sc">46</span><div class="bar" style="--hp:137px"><span class="vname">Kimi K3.1 Pro</span></div><span class="og">Moonshot AI</span></div><div class="lb-bar"><span class="who">D</span><span class="sc">33</span><div class="bar" style="--hp:98px"><span class="vname">DeepSeek V4.1 Flash 1017</span></div><span class="og">DeepSeek</span></div><div class="lb-bar"><span class="who nfx">N</span><span class="sc">32</span><div class="bar" style="--hp:95px"><span class="vname">NFlashX-1.0-Flash</span></div><span class="og">NowayCore</span></div><div class="lb-bar"><span class="who">G</span><span class="sc">32</span><div class="bar" style="--hp:95px"><span class="vname">GLM-5.3 (Max)</span></div><span class="og">Z.ai</span></div></div><footer class="lb-src">Source: Artificial Analysis</footer></article>
+        <article class="lb-card"><header><h4>AI Image Editing Leaderboard</h4><span class="lb-tag">Image model</span></header><p class="lb-sub">Elo Comparison Across Major Image Generation Labs</p><div class="lb-bars"><div class="lb-bar"><span class="who nfx">N</span><span class="sc">1091</span><div class="bar" style="--hp:95px"><span class="vname">NFlashX-Image-1.0</span></div><span class="og">NowayCore</span></div><div class="lb-bar"><span class="who">G</span><span class="sc">1200</span><div class="bar" style="--hp:190px"><span class="vname">GPT Image 2.5 Sunburst</span></div><span class="og">OpenAI</span></div><div class="lb-bar"><span class="who">G</span><span class="sc">1151</span><div class="bar" style="--hp:133px"><span class="vname">Nano Banana 2.1</span></div><span class="og">Google</span></div><div class="lb-bar"><span class="who">M</span><span class="sc">1144</span><div class="bar" style="--hp:127px"><span class="vname">MAI-Image-2.6-Flash</span></div><span class="og">Microsoft AI</span></div><div class="lb-bar"><span class="who">S</span><span class="sc">1130</span><div class="bar" style="--hp:115px"><span class="vname">Seedream 5.0 Pro</span></div><span class="og">ByteDance</span></div></div><footer class="lb-src">Source: Artificial Analysis</footer></article>
+        <article class="lb-card"><header><h4>Text To Video Leaderboard</h4><span class="lb-tag">Video model</span></header><p class="lb-sub">Elo Comparison Across Major Video Generation Labs</p><div class="lb-bars"><div class="lb-bar"><span class="who nfx">N</span><span class="sc">1067</span><div class="bar" style="--hp:100px"><span class="vname">NFlashX-Video-1.0</span></div><span class="og">NowayCore</span></div><div class="lb-bar"><span class="who">W</span><span class="sc">1172</span><div class="bar" style="--hp:150px"><span class="vname">Wan 3.0</span></div><span class="og">Alibaba</span></div><div class="lb-bar"><span class="who">M</span><span class="sc">1160</span><div class="bar" style="--hp:147px"><span class="vname">MiniMax H3</span></div><span class="og">MiniMax</span></div><div class="lb-bar"><span class="who">F</span><span class="sc">1156</span><div class="bar" style="--hp:146px"><span class="vname">FLUX 3 Max</span></div><span class="og">Black Forest Labs</span></div><div class="lb-bar"><span class="who">S</span><span class="sc">1155</span><div class="bar" style="--hp:146px"><span class="vname">Dreamina Seedance 2.5</span></div><span class="og">ByteDance</span></div></div><footer class="lb-src">Source: Artificial Analysis</footer></article>
+      </div>
+    </div>
+    <div class="ab-foot">© 2026 NFlashX Technology PTE. LTD. · Your AI, Unleashed</div>
+  </aside>
+</div>
+
+<script>
+/* ---------- NFlashX auth (server-backed) ---------- */
+const $ = s => document.querySelector(s);
+const api = (path, body) => fetch('/api/auth/' + path, {
+  method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {})
+}).then(async r => { const j = await r.json(); if (!r.ok) throw new Error(j.error || 'Request failed'); return j; });
+
+if (localStorage.getItem('nfx_session')) location.replace('platform.html');
+
+
+/* nhân đôi track - loop liền mạch */
+const abtr = document.querySelector('.ab-track');
+if (abtr) abtr.innerHTML += abtr.innerHTML;
+
+document.querySelectorAll('.pw-toggle').forEach(b => b.onclick = () => {
+  const i = document.getElementById(b.dataset.for);
+  i.type = i.type === 'password' ? 'text' : 'password';
+});
+
+$('#gotoSignup').onclick = e => { e.preventDefault(); $('#paneSignin').style.display = 'none'; $('#paneSignup').style.display = 'block'; };
+$('#gotoSignin').onclick = e => { e.preventDefault(); $('#paneSignup').style.display = 'none'; $('#paneSignin').style.display = 'block'; };
+
+const showErr = (id, msg) => { const b = $(id); b.textContent = msg; b.style.display = msg ? 'block' : 'none'; };
+const validEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+let pendingEmail = null, resendTimer = null;
+
+function startSession(r) {
+  localStorage.setItem('nfx_session', JSON.stringify({ token: r.token, email: r.user.email, name: r.user.name }));
+  location.href = 'platform.html';
+}
+function showVerify(email, devCode) {
+  pendingEmail = email;
+  $('#paneSignup').style.display = 'none';
+  $('#verifyBox').style.display = 'block';
+  $('#vEmail').textContent = email;
+  showErr('#errVerify', devCode ? 'DEV MODE (mail not configured) — your code: ' + devCode : '');
+  cooldown();
+  $('#vCode').focus();
+}
+function cooldown() {
+  const b = $('#btnResend'); let s = 45; b.disabled = true;
+  clearInterval(resendTimer);
+  resendTimer = setInterval(() => {
+    s--; b.textContent = 'Resend code (' + s + 's)';
+    if (s <= 0) { clearInterval(resendTimer); b.disabled = false; b.textContent = 'Resend code'; }
+  }, 1000);
+}
+
+$('#formSignin').addEventListener('submit', async e => {
+  e.preventDefault();
+  const email = $('#siEmail').value.trim().toLowerCase(), pass = $('#siPass').value;
+  if (!validEmail(email)) return showErr('#errSignin', 'Please enter a valid email address.');
+  if (!pass) return showErr('#errSignin', 'Please enter your password.');
+  showErr('#errSignin', '');
+  const btn = $('#btnSignin'); btn.disabled = true; btn.textContent = 'Signing in…';
+  try {
+    const r = await api('login', { email, password: pass });
+    startSession(r);
+  } catch (err) {
+    btn.disabled = false; btn.textContent = 'Sign In';
+    showErr('#errSignin', err.message);
+  }
+});
+
+$('#formSignup').addEventListener('submit', async e => {
+  e.preventDefault();
+  const name = $('#suName').value.trim(), email = $('#suEmail').value.trim().toLowerCase();
+  const pass = $('#suPass').value, pass2 = $('#suPass2').value;
+  if (!name) return showErr('#errSignup', 'Please enter your full name.');
+  if (!validEmail(email)) return showErr('#errSignup', 'Please enter a valid email address.');
+  if (pass.length < 6) return showErr('#errSignup', 'Password must be at least 6 characters.');
+  if (pass !== pass2) return showErr('#errSignup', 'Passwords do not match.');
+  showErr('#errSignup', '');
+  const btn = $('#btnSignup'); btn.disabled = true; btn.textContent = 'Creating account…';
+  try {
+    const r = await api('signup', { name, email, password: pass });
+    showVerify(email, r.dev_code);
+    btn.disabled = false; btn.textContent = 'Create account';
+  } catch (err) {
+    btn.disabled = false; btn.textContent = 'Create account';
+    showErr('#errSignup', err.message);
+  }
+});
+
+$('#btnVerify').onclick = async () => {
+  const code = $('#vCode').value.trim();
+  try {
+    const r = await api('verify', { email: pendingEmail, code });
+    startSession(r);
+  } catch (err) { showErr('#errVerify', err.message); }
+};
+$('#btnResend').onclick = async () => {
+  try {
+    const r = await api('resend', { email: pendingEmail });
+    showErr('#errVerify', r.dev_code ? 'DEV MODE — code: ' + r.dev_code : 'New code sent. Check your inbox.');
+    cooldown();
+  } catch (err) { showErr('#errVerify', err.message); }
+};
+
+/* oauth: redirect to the real provider (needs data/oauth_config.json) */
+document.querySelectorAll('.btn-oauth').forEach(b => b.onclick = async () => {
+  const p = b.dataset.provider.toLowerCase();
+  try {
+    const r = await fetch('/api/auth/oauth/' + p + '/start').then(x => x.json());
+    if (r.url) location.href = r.url;
+    else showErr('#errSignin', r.error);
+  } catch (err) { showErr('#errSignin', 'OAuth is not available right now.'); }
+});
+
+/* ---------- password reset (thật: gửi mã qua SMTP khi đã cấu hình, dev-code khi chưa) ---------- */
+let resetStage = 'request';
+$('#linkForgot').onclick = e => {
+  e.preventDefault();
+  document.getElementById('paneSignin').style.display = 'none';
+  document.getElementById('paneReset').style.display = 'block';
+  resetStage = 'request';
+  showErr('#errReset', '');
+};
+$('#backSignin').onclick = e => {
+  e.preventDefault();
+  document.getElementById('paneReset').style.display = 'none';
+  document.getElementById('paneSignin').style.display = 'block';
+  showErr('#errSignin', '');
+};
+document.getElementById('formReset').onsubmit = async ev => {
+  ev.preventDefault();
+  const email = document.getElementById('rsEmail').value.trim().toLowerCase();
+  const btn = document.getElementById('btnReset');
+  showErr('#errReset', '');
+  if (resetStage === 'request') {
+    if (!email) return showErr('#errReset', 'Enter your account email.');
+    btn.disabled = true; btn.textContent = 'Sending…';
+    try {
+      const r = await fetch('/api/auth/reset-request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) }).then(x => x.json());
+      if (r.dev_code) showErr('#errReset', 'MAIL NOT CONFIGURED — your reset code: ' + r.dev_code);
+      else if (r.sent) showErr('#errReset', 'Reset code sent — check your inbox.');
+      else showErr('#errReset', 'If that account exists, a reset code has been generated.');
+      resetStage = 'confirm';
+      document.getElementById('rsCodeRow').style.display = 'block';
+      document.getElementById('rsPassRow').style.display = 'block';
+      btn.textContent = 'Confirm reset';
+    } catch (err) { showErr('#errReset', err.message || 'Failed.'); }
+    btn.disabled = false;
+  } else {
+    const code = document.getElementById('rsCode').value.trim();
+    const pw = document.getElementById('rsPass').value;
+    btn.disabled = true; btn.textContent = 'Confirming…';
+    try {
+      const r = await fetch('/api/auth/reset-confirm', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, code, password: pw }) }).then(x => x.json());
+      if (r.ok) {
+        document.getElementById('paneReset').style.display = 'none';
+        document.getElementById('paneSignin').style.display = 'block';
+        showErr('#errSignin', '');
+        document.getElementById('siEmail').value = email;
+        alert('Password reset — sign in with your new password.');
+      } else showErr('#errReset', r.error || 'Failed.');
+    } catch (err) { showErr('#errReset', err.message || 'Failed.'); }
+    btn.disabled = false; btn.textContent = 'Confirm reset';
+  }
+};
+</script>
+</body>
+</html>

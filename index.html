@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NFlashX 1.0 — Free Omni-Modal AI (Text · Image · Video)</title>
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css?v=18">
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+<div class="aurora"><i></i><i></i><i></i></div>
+<div class="grain"></div>
+
+<!-- ================= NAVBAR ================= -->
+<header class="nav" id="nav">
+  <a class="brand" href="index.html">
+    <span class="logo"><img src="assets/logo.svg" alt="NFlashX logo"></span>
+    NFlashX
+  </a>
+
+  <nav>
+    <ul class="menu">
+      <li data-drop="models"><a href="#">Models <span class="car">▾</span></a></li>
+      <li data-drop="product"><a href="#">Product <span class="car">▾</span></a></li>
+      <li data-drop="api"><a href="#">API <span class="car">▾</span></a></li>
+      <li data-drop="company"><a href="#">Company <span class="car">▾</span></a></li>
+      <li data-drop="community"><a href="#">Community <span class="car">▾</span></a></li>
+      <li><a href="docs.html">Research</a></li>
+      <li><a href="docs.html?tab=plans">Business</a></li>
+    </ul>
+  </nav>
+
+  <div class="nav-right">
+    <a class="btn-login" href="login.html">Login</a>
+    <button class="burger" id="burger" aria-label="menu"><i></i><i></i><i></i></button>
+  </div>
+</header>
+
+<!-- dropdown panels -->
+<div class="drop models" id="drop-models">
+  <div class="col">
+    <h6><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 7V5h16v2M9 5v14m6-14v14M4 17v2h16v-2" stroke="currentColor"/></svg> Text</h6>
+    <ul>
+      <li><a href="docs.html?m=nflashx-1.0-flash">NFlashX 1.0 Flash</a></li>
+      <li><a href="docs.html?m=nflashx-1.0-pro">NFlashX 1.0 Pro</a></li>
+    </ul>
+  </div>
+  <div class="col">
+    <h6><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor"/><circle cx="9" cy="10" r="1.6" stroke="currentColor"/><path d="M5 17l4.5-4.5 3 3L17 11l3.5 3.5" stroke="currentColor"/></svg> Image</h6>
+    <ul>
+      <li><a href="playground.html">NFlashX Vision 1.0 Flash</a></li>
+    </ul>
+  </div>
+  <div class="col">
+    <h6><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="6" width="13" height="12" rx="2" stroke="currentColor"/><path d="M16 10.5l5-2.5v8l-5-2.5" stroke="currentColor"/></svg> Video</h6>
+    <ul>
+      <li><a href="docs.html?m=nflashx-motion-1.0">NFlashX Motion 1.0 <span class="badge-soon">Soon</span></a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="drop" id="drop-product">
+  <h6><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3l9 5-9 5-9-5 9-5z" stroke="currentColor"/><path d="M3 13l9 5 9-5" stroke="currentColor"/></svg> AI-Native Applications</h6>
+  <ul>
+    <li><a href="#">NFlashX <span class="ext">↗</span></a></li>
+    <li><a href="#">NFlashX Harness <span class="badge-new">New</span> <span class="ext">↗</span></a></li>
+    <li><a href="#">NFlashX Code <span class="badge-new">New</span> <span class="ext">↗</span></a></li>
+    <li><a href="#">Pavo <span class="ext">↗</span></a></li>
+    <li><a href="#">Echo <span class="ext">↗</span></a></li>
+  </ul>
+</div>
+
+<div class="drop" id="drop-api">
+  <h6><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor"/><path d="M7 9l3 3-3 3M13 15h4" stroke="currentColor"/></svg> Develop on NFlashX</h6>
+  <ul>
+    <li><a href="docs.html">Developer Docs</a></li>
+    <li><a href="#">API Platform <span class="ext">↗</span></a></li>
+    <li><a href="#">Official GitHub <span class="ext">↗</span></a></li>
+  </ul>
+</div>
+
+<div class="drop" id="drop-company">
+  <h6><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="9" stroke="currentColor"/><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18" stroke="currentColor"/></svg> Explore Company</h6>
+  <ul>
+    <li><a href="docs.html?tab=legal">Privacy Policy</a></li>
+    <li><a href="docs.html?tab=legal">Terms of Service</a></li>
+  </ul>
+</div>
+
+<div class="drop" id="drop-community">
+  <h6><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="9" cy="8" r="3.2" stroke="currentColor"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5" stroke="currentColor"/><circle cx="17" cy="9" r="2.6" stroke="currentColor"/><path d="M15.5 13.6c2.7.1 4.5 1.8 5 4.4" stroke="currentColor"/></svg> Build With Us</h6>
+  <ul>
+    <li><a href="#">Meetups</a></li>
+    <li><a href="#">Discord <span class="ext">↗</span></a></li>
+    <li><a href="#">GitHub <span class="ext">↗</span></a></li>
+    <li><a href="#">Hugging face <span class="ext">↗</span></a></li>
+    <li><a href="#">WeChat</a></li>
+  </ul>
+</div>
+
+<!-- ================= HERO ================= -->
+<main>
+<section class="hero" id="hero">
+
+  <!-- SLIDE 1 : lab + leaderboards -->
+  <article class="slide s-lab on">
+    <div class="scene">
+      <!-- blurred emerald backdrop generated with NFlashX Vision -->
+      <img class="bg-photo lab-bg" src="assets/lab-blur-bg.jpg" onerror="this.remove()" alt="">
+    </div>
+    <div class="hero-kicker rv">
+      <h2>From a Global Top 10 AI Lab</h2>
+      <a class="pill-api" href="docs.html">Free API <span>⚡</span></a>
+    </div>
+    <div class="ghost-title rv d1">Access to Frontier Intelligence</div>
+    <p class="hero-sub rv d2">Full-stack multimodal AI—text, image, and video, at state-of-the-art quality</p>
+
+    <div class="lb-row rv d3">
+      <article class="lb-card">
+        <header><h4>Artificial Analysis Intelligence Index</h4><span class="lb-tag">Text model</span></header>
+        <p class="lb-sub">Artificial Analysis Intelligence Index V5.0.1 incorporates 10 evaluations</p>
+        <div class="lb-bars">
+          <div class="lb-bar"><span class="who">O</span><span class="sc">57</span><div class="bar" style="--hp:140"><span class="vname">GPT-6.1 Sol</span></div><span class="og">OpenAI</span></div>
+          <div class="lb-bar"><span class="who">K</span><span class="sc">46</span><div class="bar" style="--hp:113"><span class="vname">Kimi K3.1 Pro</span></div><span class="og">Moonshot AI</span></div>
+          <div class="lb-bar"><span class="who">D</span><span class="sc">33</span><div class="bar" style="--hp:81"><span class="vname">DeepSeek V4.1 Flash 1017</span></div><span class="og">DeepSeek</span></div>
+          <div class="lb-bar"><span class="who nfx">N</span><span class="sc">32</span><div class="bar" style="--hp:79"><span class="vname">NFlashX-1.0-Flash</span></div><span class="og">NowayCore</span></div>
+          <div class="lb-bar"><span class="who">G</span><span class="sc">32</span><div class="bar" style="--hp:79"><span class="vname">GLM-5.3 (Max)</span></div><span class="og">Z.ai</span></div>
+        </div>
+        <footer class="lb-src">Source: <a href="#">Artificial Analysis</a></footer>
+      </article>
+
+      <article class="lb-card">
+        <header><h4>AI Image Editing Leaderboard</h4><span class="lb-tag">Image model</span></header>
+        <p class="lb-sub">Elo Comparison Across Major Image Generation Labs</p>
+        <div class="lb-bars">
+          <div class="lb-bar"><span class="who nfx">N</span><span class="sc">1091</span><div class="bar" style="--hp:92"><span class="vname">NFlashX-Image-1.0</span></div><span class="og">NowayCore</span></div>
+          <div class="lb-bar"><span class="who">G</span><span class="sc">1200</span><div class="bar" style="--hp:150"><span class="vname">GPT Image 2.5 Sunburst</span></div><span class="og">OpenAI</span></div>
+          <div class="lb-bar"><span class="who">G</span><span class="sc">1151</span><div class="bar" style="--hp:118"><span class="vname">Nano Banana 2.1</span></div><span class="og">Google</span></div>
+          <div class="lb-bar"><span class="who">M</span><span class="sc">1144</span><div class="bar" style="--hp:114"><span class="vname">MAI-Image-2.6-Flash</span></div><span class="og">Microsoft AI</span></div>
+          <div class="lb-bar"><span class="who">S</span><span class="sc">1130</span><div class="bar" style="--hp:112"><span class="vname">Seedream 5.0 Pro</span></div><span class="og">ByteDance</span></div>
+        </div>
+        <footer class="lb-src">Source: <a href="#">Artificial Analysis</a></footer>
+      </article>
+
+      <article class="lb-card">
+        <header><h4>Text To Video Leaderboard</h4><span class="lb-tag">Video model</span></header>
+        <p class="lb-sub">Elo Comparison Across Major Video Generation Labs</p>
+        <div class="lb-bars">
+          <div class="lb-bar"><span class="who nfx">N</span><span class="sc">1067</span><div class="bar" style="--hp:100"><span class="vname">NFlashX-Video-1.0</span></div><span class="og">NowayCore</span></div>
+          <div class="lb-bar"><span class="who">W</span><span class="sc">1172</span><div class="bar" style="--hp:150"><span class="vname">Wan 3.0</span></div><span class="og">Alibaba</span></div>
+          <div class="lb-bar"><span class="who">M</span><span class="sc">1160</span><div class="bar" style="--hp:147"><span class="vname">MiniMax H3</span></div><span class="og">MiniMax</span></div>
+          <div class="lb-bar"><span class="who">F</span><span class="sc">1156</span><div class="bar" style="--hp:146"><span class="vname">FLUX 3 Max</span></div><span class="og">Black Forest Labs</span></div>
+          <div class="lb-bar"><span class="who">S</span><span class="sc">1155</span><div class="bar" style="--hp:146"><span class="vname">Dreamina Seedance 2.5</span></div><span class="og">ByteDance</span></div>
+        </div>
+        <footer class="lb-src">Source: <a href="#">Artificial Analysis</a></footer>
+      </article>
+    </div>
+
+    <div class="btn-row rv d4" style="margin-top:36px">
+      <a class="btn-x" href="playground.html">Try Now</a>
+      <a class="btn-x" href="docs.html">Learn More</a>
+    </div>
+  </article>
+
+  <!-- SLIDE 2 : brand -->
+  <article class="slide s-brand">
+    <div class="scene">
+      <!-- full-bleed artwork generated with NFlashX Vision -->
+      <img class="bg-photo brand-photo" src="assets/hero-brand-5.jpg"
+           onerror="this.remove()"
+           alt="NFlashX brand artwork generated by NFlashX Vision">
+      <div class="scene-veil brand-veil"></div>
+      <div class="ground"></div>
+    </div>
+    <h2 class="wordmark rv">NFlashX</h2>
+    <p class="tagline rv d1">AI Parity for the 99% · Inclusion and Accessibility for All</p>
+    <div class="brand-spacer rv d2"></div>
+    <div class="btn-row rv d3">
+      <a class="btn-x btn-primary" href="docs.html">Learn More</a>
+    </div>
+  </article>
+
+  <!-- SLIDE 3 : motion video -->
+  <article class="slide s-vid">
+    <div class="scene">
+      <!-- cinematic layer: AI-generated video background -->
+      <div class="kb-img"><img src="assets/motion-poster.jpg" alt=""></div>
+      <video class="vid-bg" autoplay muted loop playsinline poster="assets/motion-poster.jpg"
+             src="assets/motion-bg.mp4" onerror="this.remove()"></video>
+      <div class="scene-veil"></div>
+      <div class="fog"></div>
+      <div class="beam2"></div>
+      <div class="lamp l1"></div>
+      <div class="lamp l2"></div>
+    </div>
+    <h2 class="vid-title rv">NFlashX
+      <svg class="icam" viewBox="0 0 24 24" fill="none" stroke="#dfe9ff" stroke-width="1.7"><rect x="2.5" y="6" width="13" height="12" rx="2.5"/><path d="M15.5 10.5l6-3v9l-6-3"/></svg>
+      Motion 1.0
+    </h2>
+    <p class="hero-sub rv d1">Cinematic-Quality Video With Synchronized Audio,<br>Generated At High Speed.</p>
+    <div class="btn-row rv d2">
+      <a class="btn-x" href="docs.html">Access API</a>
+      <a class="btn-x" href="playground.html">Try Now</a>
+      <a class="btn-x" href="docs.html">Learn More</a>
+    </div>
+  </article>
+
+  <!-- SLIDE 4 : image flash -->
+  <article class="slide s-img">
+    <div class="scene">
+      <span class="comet c1"></span><span class="comet c2"></span><span class="comet c3"></span>
+      <span class="spark" style="left:8%;top:18%"></span><span class="spark" style="left:30%;top:64%;animation-delay:1s"></span>
+      <span class="spark" style="left:88%;top:26%;animation-delay:.5s"></span><span class="spark" style="left:60%;top:80%;animation-delay:1.6s"></span>
+      <span class="spark" style="left:76%;top:12%;animation-delay:2.2s"></span>
+    </div>
+    <div class="img-layout">
+      <div class="img-copy">
+        <h2 class="rv">NFlashX
+          <svg class="ia" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.2 6.4L21 11l-6.8 2.6L12 20l-2.2-6.4L3 11l6.8-2.6L12 2z" fill="#cfc0ff"/></svg>
+          <span class="l2">Vision 1.0 Flash</span>
+        </h2>
+        <p class="rv d1">High-quality visuals, generated instantly</p>
+        <div class="btn-row rv d2" style="justify-content:flex-start">
+          <a class="btn-x" href="docs.html">Access API</a>
+          <a class="btn-x" href="playground.html">Try Now</a>
+          <a class="btn-x" href="docs.html">Learn More</a>
+        </div>
+        <form class="promptbar rv d3" id="heroPromptForm">
+          <div class="prow">
+            <span class="pava"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2 2-5z"/></svg></span>
+            <input id="heroPrompt" type="text" placeholder="Enter your idea and generate your image !" autocomplete="off">
+            <button class="sendbtn" type="submit" aria-label="Generate">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 19V5m-6 6l6-6 6 6"/></svg>
+            </button>
+          </div>
+          <div class="chips">
+            <span class="pchip">✦ Image Generation</span>
+            <span class="pchip">⚡ NFlashX Vision 1.0 Flash</span>
+          </div>
+        </form>
+      </div>
+
+      <div class="gal rv d2">
+        <div class="gal-main">
+          <span class="gal-tag"><i class="dot"></i> NFlashX Vision</span>
+          <img id="galMain" src="assets/gallery-1.jpg" alt="NFlashX Vision sample">
+        </div>
+        <!-- five distinct images generated with NFlashX Vision -->
+        <div class="thumbs" id="thumbs">
+          <button class="sel" data-src="assets/gallery-1.jpg"><img loading="lazy" alt="" src="assets/gallery-1.jpg"></button>
+          <button data-src="assets/gallery-2.jpg"><img loading="lazy" alt="" src="assets/gallery-2.jpg"></button>
+          <button data-src="assets/gallery-3.jpg"><img loading="lazy" alt="" src="assets/gallery-3.jpg"></button>
+          <button data-src="assets/gallery-4.jpg"><img loading="lazy" alt="" src="assets/gallery-4.jpg"></button>
+          <button data-src="assets/gallery-5.jpg"><img loading="lazy" alt="" src="assets/gallery-5.jpg"></button>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- SLIDE 5 : token plan -->
+  <article class="slide s-plan">
+    <div class="scene"></div>
+    <div class="plan-layout">
+      <div class="plan-copy">
+        <h2 class="rv">NFlashX
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#bfe0ff" stroke-width="1.7"><path d="M8 3h8l-1 7h4l-9 11 2-8H7l1-10z" stroke-linejoin="round"/></svg>
+          1.0 Flash
+        </h2>
+        <p class="rv d1">A Cost-Effective Token Plan Tailored For Developers</p>
+        <div class="btn-row rv d2" style="justify-content:flex-start">
+          <a class="btn-x" href="docs.html?tab=plans">Free API</a>
+          <a class="btn-x" href="docs.html?tab=plans">Subscribe</a>
+        </div>
+      </div>
+
+      <div class="orbit-stage rv d2">
+        <div class="orbit-ring o1"></div>
+        <div class="orbit-ring o2"></div>
+        <span class="orbit-dot" style="left:24%;top:30%"></span>
+        <span class="orbit-dot" style="left:70%;top:22%;animation-delay:1s"></span>
+        <span class="orbit-dot" style="left:80%;top:66%;animation-delay:2s"></span>
+        <span class="orbit-dot" style="left:20%;top:70%;animation-delay:.6s"></span>
+
+        <div class="app-icon">
+          <svg viewBox="0 0 48 48" fill="none">
+            <defs><linearGradient id="ag" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7fd8ff"/><stop offset="1" stop-color="#2f7ff0"/></linearGradient></defs>
+            <path d="M14 34c-2-10 3-22 12-27-3 7-2 12 2 16 4 4 5 9 2 13-2-4-5-5-8-3-3 1-5 3-8 1z" fill="url(#ag)"/>
+            <circle cx="33" cy="13" r="4.5" fill="url(#ag)"/>
+            <path d="M31 36c6-2 9-6 10-12" stroke="url(#ag)" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <div class="f-chip" style="left:34%;top:2%">
+          <span class="fic"><svg viewBox="0 0 24 24" fill="none"><path d="M19 5L5 19M6.5 9a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM17.5 20a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" stroke-width="1.8"/></svg></span>
+          <div><b>Top-Model</b><span>Production-ready deployment</span></div>
+        </div>
+
+        <div class="f-chip" style="left:0%;top:44%;animation-delay:1.2s">
+          <span class="fic"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke-width="1.8"/><path d="M14.5 8.5c-1.6-1-4-1-5 .5-.8 1.2 0 2.4 2.5 2.9s3.6 1.8 2.6 3.2c-1 1.4-3.6 1.4-5.3.3M12 6.5v11" stroke-width="1.8"/></svg></span>
+          <div><b>High-Value Monthly Plan</b><span>The more you use, the more you get</span></div>
+        </div>
+
+        <div class="f-chip" style="right:0%;top:66%;animation-delay:2s">
+          <span class="fic"><svg viewBox="0 0 24 24" fill="none"><path d="M8 6l-5 6 5 6M16 6l5 6-5 6M13.5 5l-3 14" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+          <div><b>Ready Out of the Box</b><span>One-click integration with leading developer tools</span></div>
+        </div>
+
+        <div class="bub" style="left:12%;top:14%"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2.5" stroke-width="1.8"/><circle cx="9" cy="10" r="1.6" stroke-width="1.8"/><path d="M5 17l4.5-4.5 3 3L17 11l3.5 3.5" stroke-width="1.8"/></svg></div>
+        <div class="bub" style="right:8%;top:30%;animation-delay:1s"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="3" stroke-width="1.8"/><path d="M10 9l4 3-4 3V9z" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+        <div class="bub" style="right:14%;top:82%;animation-delay:1.6s"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke-width="1.8"/><path d="M8.5 14.5c1 1.2 2.2 1.8 3.5 1.8s2.5-.6 3.5-1.8" stroke-width="1.8" stroke-linecap="round"/><circle cx="9" cy="9.5" r="1" fill="currentColor"/><circle cx="15" cy="9.5" r="1" fill="currentColor"/></svg></div>
+        <div class="bub" style="left:16%;top:84%;animation-delay:.8s"><svg viewBox="0 0 24 24" fill="none"><path d="M8 6l-5 6 5 6M16 6l5 6-5 6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+        <svg class="coins" viewBox="0 0 64 72" fill="none">
+          <ellipse cx="24" cy="58" rx="18" ry="8" stroke="#8fc0ff" stroke-width="2"/>
+          <ellipse cx="24" cy="50" rx="18" ry="8" stroke="#8fc0ff" stroke-width="2"/>
+          <ellipse cx="24" cy="42" rx="18" ry="8" stroke="#8fc0ff" stroke-width="2"/>
+          <circle cx="46" cy="24" r="12" stroke="#ffd98a" stroke-width="2"/>
+          <path d="M46 17v14M42.5 19.5c1-1.4 6-1.4 7 0M42.5 28.5c1 1.4 6 1.4 7 0" stroke="#ffd98a" stroke-width="1.6"/>
+        </svg>
+      </div>
+    </div>
+  </article>
+
+  <!-- slider chrome -->
+  <button class="hero-arrow prev" id="prev" aria-label="Previous slide">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>
+  </button>
+  <button class="hero-arrow next" id="next" aria-label="Next slide">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+  </button>
+  <div class="dots" id="dots"></div>
+</section>
+
+<!-- intro -->
+<section class="intro-wrap">
+  <div class="intro">
+    <p>Bring <span class="hl">NFlashX intelligence</span> into any product or platform.</p>
+    <p>Our model suite features high-precision models consistently ranked on PinchBench, purpose-built to power agentic tools such as OpenClaw and Hermes. Alongside text-to-image, image-to-image, and image-to-video models that deliver cinematic-quality visuals, synchronized audio-visual generation, and fast performance—enabling seamless creation, transformation, and deployment of rich AI-generated content.</p>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="site-footer">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="index.html">
+        <span class="logo"><img src="assets/logo.svg" alt=""></span>
+        NFlashX
+      </a>
+      <p class="slog">Your AI, Unleashed</p>
+      <p class="copy">© 2026 NFLASHX TECHNOLOGY PTE. LTD.</p>
+      <div class="socials">
+        <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.7c0-.9.3-1.6 1.6-1.6h1.7V4.2c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.4V14h2.7v8h3.4z"/></svg></a>
+        <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M22.5 7.2a2.8 2.8 0 00-2-2C18.8 4.8 12 4.8 12 4.8s-6.8 0-8.5.4a2.8 2.8 0 00-2 2A29 29 0 001 12a29 29 0 00.5 4.8 2.8 2.8 0 002 2c1.7.4 8.5.4 8.5.4s6.8 0 8.5-.4a2.8 2.8 0 002-2A29 29 0 0023 12a29 29 0 00-.5-4.8zM9.8 15.3V8.7l5.7 3.3-5.7 3.3z"/></svg></a>
+        <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M4.98 3.5A2.5 2.5 0 002.5 6a2.5 2.5 0 002.48 2.5A2.5 2.5 0 007.5 6a2.5 2.5 0 00-2.52-2.5zM3 9h4v12H3zM9.5 9h3.8v1.7h.1c.5-1 1.8-2 3.7-2 4 0 4.7 2.6 4.7 6V21h-4v-5.5c0-1.3 0-3-1.9-3s-2.2 1.4-2.2 2.9V21h-4V9z"/></svg></a>
+        <a href="#" aria-label="X"><svg viewBox="0 0 24 24"><path d="M18.9 2H22l-7 8 8.2 12h-6.4l-5-7.3L6 22H2.9l7.5-8.6L2.5 2H9l4.5 6.6L18.9 2zm-1.1 18h1.8L7.1 3.9H5.2L17.8 20z"/></svg></a>
+        <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M16.6 3c.4 2.2 1.8 3.6 4 3.8v3c-1.5 0-2.9-.5-4-1.3v6.3c0 4-2.8 6.2-6 6.2A5.6 5.6 0 015 15.4c0-3.3 2.6-5.6 6.2-5.4v3.1c-1.7-.3-3.1.6-3.1 2.3 0 1.5 1.1 2.6 2.6 2.6 1.6 0 2.8-1.2 2.8-3.2V3h3.1z"/></svg></a>
+        <a href="#" aria-label="Discord"><svg viewBox="0 0 24 24"><path d="M19.3 5.3A16 16 0 0015.4 4l-.5 1a15 15 0 00-5.8 0L8.6 4a16 16 0 00-3.9 1.3C2.2 9.2 1.5 13 1.8 16.7A16 16 0 006.7 19l1-1.6a10 10 0 01-1.6-.8l.4-.3a11.4 11.4 0 009 0l.4.3c-.5.3-1 .6-1.6.8l1 1.6a16 16 0 004.9-2.3c.4-4.3-.7-8-2.9-11.4zM8.7 14.4c-1 0-1.7-.9-1.7-1.9s.8-1.9 1.7-1.9 1.8.9 1.7 1.9c0 1-.8 1.9-1.7 1.9zm6.6 0c-1 0-1.7-.9-1.7-1.9s.8-1.9 1.7-1.9 1.8.9 1.7 1.9c0 1-.7 1.9-1.7 1.9z"/></svg></a>
+      </div>
+      <button class="lang">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18"/></svg>
+        English
+      </button>
+    </div>
+    <div class="foot-col">
+      <h5>Product</h5>
+      <ul>
+        <li><a href="#">NFlashX</a></li>
+        <li><a href="#">NFlashX Harness <span class="badge-new">New</span></a></li>
+        <li><a href="#">NFlashX Code <span class="badge-new">New</span></a></li>
+        <li><a href="#">Pavo</a></li>
+        <li><a href="#">Echo</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h5>API</h5>
+      <ul>
+        <li><a href="docs.html">Developer Docs</a></li>
+        <li><a href="#">API Platform</a></li>
+        <li><a href="#">Official GitHub</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h5>Company</h5>
+      <ul>
+        <li><a href="docs.html?tab=legal">Privacy Policy</a></li>
+        <li><a href="docs.html?tab=legal">Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-base">NFlashX 1.0 — <b>Full-stack multimodal AI</b> · text · image · video</div>
+</footer>
+</main>
+
+<script src="js/app.js?v=17"></script>
+<script src="js/auth-modal.js?v=19"></script>
+</body>
+</html>

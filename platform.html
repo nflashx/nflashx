@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NFlashX API Platform</title>
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css?v=18">
+<link rel="stylesheet" href="css/platform.css?v=17">
+</head>
+<body class="plat">
+
+<header class="plat-top">
+  <a class="brandline" href="index.html">
+    <img src="assets/logo.svg" alt=""> NFlashX <span class="sep">|</span> <span class="sub">API Platform</span>
+  </a>
+  <div class="top-right">
+    <a href="#">EN <span style="font-size:10px">↗</span></a>
+    <a href="docs.html" target="_blank">Documentation</a>
+    <a href="#profile">Account</a>
+    <a href="#agent-plan">Subscribe</a>
+    <button class="bell" aria-label="Notifications" onclick="location.hash='#notifications'">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg>
+      <span class="dot"></span>
+    </button>
+    <a class="avatar" id="topAvatar" href="#profile">N</a>
+  </div>
+</header>
+
+<div class="plat-body">
+  <aside class="plat-side">
+    <div class="grp open" data-g="settings">
+      <div class="grp-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33h0a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51h0a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v0a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Settings <span class="car">▾</span>
+      </div>
+      <ul class="grp-list">
+        <li><a href="#profile" class="on">Your Profile</a></li>
+        <li><a href="#api-keys">API Keys</a></li>
+        <li><a href="#usage">Usage</a></li>
+      </ul>
+    </div>
+    <div class="grp" data-g="admin" id="adminGrp" style="display:none">
+      <div class="grp-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/></svg>
+        Admin Console <span class="car">▾</span>
+      </div>
+      <ul class="grp-list">
+        <li><a href="admin.html">Users, Keys & Usage</a></li>
+      </ul>
+    </div>
+    <div class="grp" data-g="billing">
+      <div class="grp-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+        Billing <span class="car">▾</span>
+      </div>
+      <ul class="grp-list">
+        <li><a href="#balance">Balance</a></li>
+        <li><a href="#billing">Billing</a></li>
+      </ul>
+    </div>
+    <div class="grp" data-g="subscribe">
+      <div class="grp-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M12 2l2.4 5.4L20 8.3l-4.3 4 1.2 5.9L12 15.3 7.1 18.2l1.2-5.9L4 8.3l5.6-.9L12 2z"/></svg>
+        Subscribe <span class="car">▾</span>
+      </div>
+      <ul class="grp-list">
+        <li><a href="#agent-plan">Agent Plan</a></li>
+      </ul>
+    </div>
+    <div class="grp" data-g="notifications">
+      <div class="grp-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg>
+        Notifications <span class="car">▾</span>
+      </div>
+      <ul class="grp-list">
+        <li><a href="#notifications">User Notifications</a></li>
+      </ul>
+    </div>
+
+    <div class="side-widgets">
+      <div class="pill-row">
+        <a class="pill-connect" href="docs.html#quickstart">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+          Connect tool
+        </a>
+        <a class="pill-gh" href="https://github.com" target="_blank">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2 0 1.9 1.2 1.9 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0C17.3 4.6 18.3 5 18.3 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0012 .3z"/></svg>
+          GitHub
+        </a>
+      </div>
+      <div class="qr-row">
+        <a class="qr-item discord" href="#">
+          <span class="qr"><svg viewBox="0 0 21 16" width="52" height="40"><rect width="3" height="3" x="1" y="1" fill="#4a6cf7"/><rect width="3" height="3" x="5" y="1" fill="#4a6cf7"/><rect width="3" height="1" x="9" y="1" fill="#4a6cf7"/><rect width="3" height="3" x="13" y="1" fill="#4a6cf7"/><rect width="1" height="3" x="17" y="1" fill="#4a6cf7"/><rect width="3" height="1" x="1" y="5" fill="#4a6cf7"/><rect width="1" height="3" x="5" y="5" fill="#4a6cf7"/><rect width="3" height="3" x="9" y="5" fill="#4a6cf7"/><rect width="1" height="1" x="13" y="5" fill="#4a6cf7"/><rect width="3" height="3" x="17" y="5" fill="#4a6cf7"/><rect width="1" height="1" x="1" y="9" fill="#4a6cf7"/><rect width="3" height="3" x="5" y="9" fill="#4a6cf7"/><rect width="1" height="3" x="9" y="9" fill="#4a6cf7"/><rect width="3" height="1" x="13" y="9" fill="#4a6cf7"/><rect width="1" height="3" x="17" y="9" fill="#4a6cf7"/><rect width="3" height="3" x="1" y="13" fill="#4a6cf7"/><rect width="1" height="3" x="5" y="13" fill="#4a6cf7"/><rect width="3" height="1" x="9" y="13" fill="#4a6cf7"/><rect width="3" height="3" x="13" y="13" fill="#4a6cf7"/><rect width="1" height="1" x="17" y="13" fill="#4a6cf7"/></svg></span>
+          <span style="color:#5865f2;font-weight:600">Discord</span>
+        </a>
+        <a class="qr-item" href="#">
+          <span class="qr"><svg viewBox="0 0 21 16" width="52" height="40"><rect width="3" height="3" x="1" y="1" fill="#2aae67"/><rect width="1" height="3" x="5" y="1" fill="#2aae67"/><rect width="3" height="1" x="9" y="1" fill="#2aae67"/><rect width="1" height="1" x="13" y="1" fill="#2aae67"/><rect width="3" height="3" x="17" y="1" fill="#2aae67"/><rect width="1" height="1" x="1" y="5" fill="#2aae67"/><rect width="3" height="3" x="5" y="5" fill="#2aae67"/><rect width="1" height="3" x="9" y="5" fill="#2aae67"/><rect width="3" height="1" x="13" y="5" fill="#2aae67"/><rect width="1" height="3" x="17" y="5" fill="#2aae67"/><rect width="3" height="1" x="1" y="9" fill="#2aae67"/><rect width="1" height="3" x="5" y="9" fill="#2aae67"/><rect width="3" height="3" x="9" y="9" fill="#2aae67"/><rect width="1" height="1" x="13" y="9" fill="#2aae67"/><rect width="3" height="1" x="17" y="9" fill="#2aae67"/><rect width="1" height="3" x="1" y="13" fill="#2aae67"/><rect width="3" height="3" x="5" y="13" fill="#2aae67"/><rect width="1" height="1" x="9" y="13" fill="#2aae67"/><rect width="1" height="3" x="13" y="13" fill="#2aae67"/><rect width="3" height="3" x="17" y="13" fill="#2aae67"/></svg></span>
+          <span style="color:#2aae67;font-weight:600">WeChat</span>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="plat-main" id="pageContent"></main>
+</div>
+
+<button class="live-chat">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+  Live Chat
+</button>
+
+<script>
+const $ = s => document.querySelector(s);
+let ME = null;
+
+const sess = JSON.parse(localStorage.getItem('nfx_session') || 'null');
+if (!sess || !sess.token) location.replace('login.html');
+
+const api = (p, body) => fetch('/api/auth/' + p, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + sess.token },
+  body: JSON.stringify(body || {})
+}).then(async r => {
+  const j = await r.json();
+  if (!r.ok) {
+    // 401 hết hạn HOẶC 403 (banned/account unavailable) → đá về login, không để nằm trang trống
+    if (r.status === 401 || (r.status === 403 && /banned|unavailable|expired/i.test(j.error || ''))) {
+      localStorage.removeItem('nfx_session');
+      location.href = 'login.html';
+    }
+    throw new Error(j.error || 'Request failed');
+  }
+  return j;
+});
+
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+
+/* ---------- Toast (thay alert xấu của Windows) ---------- */
+function toast(msg, kind) {
+  let host = document.getElementById('nfToastHost');
+  if (!host) {
+    host = document.createElement('div');
+    host.id = 'nfToastHost';
+    host.style.cssText = 'position:fixed;top:22px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none';
+    document.body.appendChild(host);
+  }
+  const colors = {
+    ok:   ['linear-gradient(92deg,#0ea86f,#25e39a)', '#03130c', '✓'],
+    err:  ['linear-gradient(92deg,#c0392b,#ff6b6b)', '#fff', '!'],
+    info: ['linear-gradient(92deg,#1e2a3a,#2d3f55)', '#e8f1f8', 'i']
+  };
+  const [bg, fg, icon] = colors[kind || 'info'];
+  const el = document.createElement('div');
+  el.style.cssText = `background:${bg};color:${fg};padding:12px 20px;border-radius:12px;font-size:13.5px;font-weight:600;font-family:Inter,system-ui,sans-serif;box-shadow:0 14px 40px rgba(0,0,0,.55);display:flex;gap:10px;align-items:flex-start;max-width:520px;line-height:1.5;opacity:0;transform:translateY(-10px);transition:.25s;pointer-events:auto;border:1px solid rgba(255,255,255,.14)`;
+  el.innerHTML = `<span style="font-weight:800">${icon}</span><span>${String(msg).replace(/</g,'&lt;')}</span>`;
+  host.appendChild(el);
+  requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
+  setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(-10px)'; setTimeout(() => el.remove(), 300); }, kind === 'err' ? 6000 : 3800);
+}
+window.alert = (m) => toast(m, /error|fail|cannot|invalid|must|not /i.test(String(m)) ? 'err' : 'info');
+
+/* ---------- Dialog đẹp thay confirm()/prompt() ---------- */
+function nfDialog({ title, message, input, placeholder, type, okText, danger }) {
+  return new Promise(resolve => {
+    const bd = document.createElement('div');
+    bd.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);z-index:10000;display:flex;align-items:center;justify-content:center;opacity:0;transition:.18s';
+    bd.innerHTML = `
+      <div style="background:#0c1016;border:1px solid rgba(255,255,255,.13);border-radius:18px;padding:26px;width:min(420px,92vw);box-shadow:0 30px 80px rgba(0,0,0,.7);font-family:Inter,system-ui,sans-serif;transform:scale(.96);transition:.18s">
+        <h3 style="margin:0 0 8px;font-family:'Space Grotesk',sans-serif;font-size:18px;color:#f2f6f9">${esc(title || '')}</h3>
+        ${message ? `<p style="margin:0 0 16px;color:#96a3b2;font-size:13.5px;line-height:1.6">${esc(message)}</p>` : ''}
+        ${input ? `<input id="nfDlgInput" type="${type || 'text'}" placeholder="${esc(placeholder || '')}" style="width:100%;background:#070b12;border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:11px 13px;color:#f2f6f9;font-size:14px;outline:none;margin-bottom:18px;box-sizing:border-box">` : ''}
+        <div style="display:flex;gap:10px;justify-content:flex-end">
+          <button id="nfDlgCancel" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);color:#96a3b2;border-radius:10px;padding:10px 18px;font-size:13.5px;font-weight:600;cursor:pointer">Cancel</button>
+          <button id="nfDlgOk" style="background:${danger ? 'linear-gradient(92deg,#c0392b,#ff6b6b)' : 'linear-gradient(92deg,#0ea86f,#25e39a)'};border:none;color:${danger ? '#fff' : '#03130c'};border-radius:10px;padding:10px 20px;font-size:13.5px;font-weight:700;cursor:pointer">${esc(okText || 'OK')}</button>
+        </div>
+      </div>`;
+    document.body.appendChild(bd);
+    requestAnimationFrame(() => { bd.style.opacity = '1'; bd.firstElementChild.style.transform = 'scale(1)'; });
+    const inp = bd.querySelector('#nfDlgInput');
+    if (inp) setTimeout(() => inp.focus(), 80);
+    const close = v => { bd.style.opacity = '0'; setTimeout(() => { bd.remove(); resolve(v); }, 180); };
+    bd.querySelector('#nfDlgCancel').onclick = () => close(input ? null : false);
+    bd.querySelector('#nfDlgOk').onclick = () => close(input ? (inp.value || '') : true);
+    if (inp) inp.onkeydown = e => { if (e.key === 'Enter') bd.querySelector('#nfDlgOk').click(); };
+    bd.addEventListener('click', e => { if (e.target === bd) close(input ? null : false); });
+    document.addEventListener('keydown', function esc2(e) {
+      if (e.key === 'Escape') { close(input ? null : false); document.removeEventListener('keydown', esc2); }
+    });
+  });
+}
+window.confirm = (m) => nfDialog({ title: 'Confirm', message: m, okText: 'Confirm', danger: /delete|remove|xóa/i.test(String(m)) });
+window.prompt = (m) => nfDialog({ title: 'Input', message: m, input: true });
+
+const ICON_COPY = '<button class="copy-ic" onclick="copyText(this.dataset.v,this)" data-v=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg></button>';
+const copyText = (v, btn) => { navigator.clipboard.writeText(v).catch(()=>{}); btn.innerHTML = '✓'; setTimeout(()=>btn.innerHTML='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg>', 1200); };
+
+const PAGES = {
+  profile: {
+    title: 'Your Profile',
+    render(u) {
+      const id = 'ID-' + (u.email.split('@')[0].toUpperCase().replace(/[^A-Z0-9]/g,'')) + '-' + Math.floor(u.created || 0);
+      return `
+      <h1>Your Profile</h1>
+      <h2>Basic Information</h2>
+      <div class="kv"><span class="k">Email</span><span class="v">${esc(u.email)} <span class="badge-verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Verified</span></span></div>
+      <div class="kv"><span class="k">ID</span><span class="v">${esc(id)} ${ICON_COPY.replace('data-v=""','data-v="'+id+'"')}</span></div>
+      <div class="btn-row">
+        <a class="btn-dark" href="#api-keys">Get Your Key</a>
+        <a class="btn-light" href="#" data-recharge>Recharge</a>
+      </div>
+      <div class="sec">
+        <h2 style="margin-top:0">Security Settings</h2>
+        <div class="kv" style="align-items:flex-start"><span class="k">Password</span><span class="v"><span class="linklike" id="pwSet">Set</span></span></div>
+        <p class="desc">You can update your password to better secure your account.</p>
+        <div class="kv" style="align-items:flex-start;margin-top:18px"><span class="k">Delete Account</span><span class="v"><span class="linklike danger" id="accDel">Delete</span></span></div>
+        <p class="desc">If you no longer wish to use the service, you can permanently delete your account.</p>
+      </div>
+      <div class="sec">
+        <h2 style="margin-top:0">Language Settings</h2>
+        <select class="lang-sel"><option>English</option><option>Tiếng Việt</option><option>中文</option></select>
+      </div>`;
+    },
+    after() {
+      $('#pwSet').onclick = async () => {
+        const p = prompt('New password (min 6 characters):');
+        if (p === null) return;
+        if (p.length < 6) return alert('Password must be at least 6 characters.');
+        try { await api('set-password', { token: sess.token, password: p }); alert('Password updated — you can now sign in with email + password.'); }
+        catch (e) { alert(e.message); }
+      };
+      const del = $('#accDel');
+      let armed = false;
+      del.onclick = async () => {
+        if (!armed) {
+          armed = true; del.textContent = 'Click again to confirm — permanent!';
+          setTimeout(() => { armed = false; del.textContent = 'Delete'; }, 4000);
+          return;
+        }
+        const c = prompt('Type DELETE to permanently remove your account:');
+        if (c === null) return;
+        try {
+          await api('delete-account', { token: sess.token, confirm: c });
+          localStorage.removeItem('nfx_session');
+          location.href = 'index.html';
+        } catch (e) { alert(e.message); }
+      };
+    }
+  },
+  'api-keys': {
+    title: 'API Keys',
+    render(u) {
+      return `
+      <h1>API Keys</h1>
+      <p class="desc">Do not share your API key with others, or expose it in the browser or other client-side code.</p>
+      <p class="desc">1. Create a secret key; 2. Connect to NFlashX omnimodal free models; 3. Start exploring.</p>
+      <div class="btn-row" style="justify-content:space-between;align-items:center;margin-bottom:0">
+        <button class="btn-dark sm" id="createKey">Create new secret key</button>
+        <a class="linklike" href="docs.html#quickstart" style="text-decoration:none">Connect Coding Tools ↗</a>
+      </div>
+      <table class="apitable">
+        <thead><tr><th style="width:22%">Name</th><th style="width:26%">Secret Key</th><th style="width:22%">Created time(UTC)</th><th style="width:16%">Last used(UTC)</th><th>Operations</th></tr></thead>
+        <tbody id="keyRows"><tr><td colspan="5"><div class="no-data">Loading…</div></td></tr></tbody>
+      </table>
+      <h2>Enterprise Keys</h2>
+      <p class="desc">After completing Enterprise Verification, you can create enterprise API keys. Enterprise API keys have 2× the RPM limit of free personal user keys.</p>
+      <div class="empty">Enterprise Verification is required before creating enterprise keys.</div>`;
+    },
+    after() { loadKeys(); }
+  }, usage: {
+    title: 'Usage',
+    render(u) {
+      return `
+      <h1>Usage <span style="color:#b6bfc9;font-size:14px">ⓘ</span></h1>
+      <div class="stats">
+        <div class="stat"><div class="n" id="uReq">…</div><div class="l">Total Requests</div></div>
+        <div class="stat"><div class="n" id="uToday">…</div><div class="l">Requests Today</div></div>
+        <div class="stat"><div class="n" id="uImg">…</div><div class="l">Images Generated</div></div>
+        <div class="stat"><div class="n" id="uVid">…</div><div class="l">Video Tasks</div></div>
+        <div class="stat"><div class="n" id="uDays">…</div><div class="l">Active Days</div></div>
+      </div>
+      <div class="heat-wrap">
+        <div class="heat-head"><span>Activity — past 12 months</span><span style="font-weight:400;color:#8a949f;font-size:12px" id="uRange"></span></div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:12px">
+          <span style="font-size:13px;font-weight:600">Less</span>
+          <span id="uHeat" style="display:grid;grid-template-rows:repeat(7,11px);grid-auto-flow:column;gap:3px"></span>
+          <span style="font-size:13px;font-weight:600">More</span>
+        </div>
+        <p class="desc" style="margin-top:8px" id="uActive"></p>
+      </div>
+      <div class="heat-wrap">
+        <div class="heat-head"><span>Usage Trend — last 14 days</span></div>
+        <svg id="uTrend" viewBox="0 0 700 190" style="width:100%;height:200px;margin-top:10px"></svg>
+      </div>`;
+    },
+    after() { loadUsage(); }
+  },  balance: {
+    title: 'Balance',
+    render(u) {
+      return `
+      <h1>Balance <span style="color:#b6bfc9;font-size:14px">ⓘ</span></h1>
+      <p class="desc" style="margin-top:14px">Effective balance</p>
+      <div class="bal-big" id="balBig">$ —</div>
+      <div class="bal-box">
+        <div class="b"><b>Current balance</b><span id="balCur">$ —</span></div>
+        <div class="b"><b>Voucher balance</b><span>$0.000000</span></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-dark sm" id="recharge10">Recharge $10</button>
+        <button class="btn-light sm" data-recharge>Custom amount…</button>
+      </div>
+      <div class="sec">
+        <h2 style="margin-top:0">Payment History</h2>
+        <div id="payRows"><div class="no-data">No recharge requests yet</div></div>
+      </div>`;
+    },
+    after() {
+      loadBalance();
+      const b10 = document.getElementById('recharge10');
+      if (b10) b10.onclick = async () => {
+        b10.disabled = true; b10.textContent = 'Submitting…';
+        try {
+          const r = await api('recharge-request', { token: sess.token, amount: 10 });
+          if (r.request && r.request.status === 'approved') {
+            alert('✓ Credited $10 to your balance instantly (admin account).');
+            loadBalance();
+          } else if (r.payment) {
+            showPayPanel(r.payment, null);
+          }
+          loadBalance();
+        } catch (e) { alert(e.message); }
+        b10.disabled = false; b10.textContent = 'Recharge $10';
+      };
+    }
+  },  billing: {
+    title: 'Billing',
+    render() {
+      return `
+      <h1>Billing</h1>
+      <p class="desc">Invoices and payment history.</p>
+      <div class="empty">No billing records yet.</div>`;
+    }
+  },
+  'token-plan': {
+    title: 'Token Plan',
+    render() {
+      return `
+      <h1>Token Plan</h1>
+      <p class="desc">Starter quotas included with every account.</p>
+      <div class="empty">Token Plan details are coming soon.</div>`;
+    }
+  },  'agent-plan': {
+    title: 'Agent Plan',
+    render(u) {
+      const isPro = String(u.plan).toLowerCase() === 'pro';
+      return `
+      <h1>Agent Plan</h1>
+      <p class="desc">Shared quota across text, image, and video — for teams and heavy agent workflows.</p>
+      <div class="bal-box" style="margin:14px 0">
+        <div class="b"><b>Agent Plan — Pro tier</b><span style="font-family:'Space Grotesk';font-weight:700">$10</span></div>
+        <div class="b"><b>Your current tier</b><span>${esc(u.plan)} ${isPro ? '<span style="color:#25e39a">✓ active</span>' : ''}</span></div>
+      </div>
+      ${isPro
+        ? '<div class="empty" style="color:#25e39a">You are already on the Pro tier — full API access unlocked.</div>'
+        : `<div class="btn-row">
+             <button class="btn-dark sm" id="subNow">Subscribe Now — $10</button>
+           </div>
+           <p class="desc" style="margin-top:10px">Subscribing sends a request to the admin. Once approved, your account tier becomes Pro: the nflashx-1.0-pro model unlocks and new keys are issued with the sk-nfx-pro- prefix.</p>`}`;
+    },
+    after() {
+      const b = document.getElementById('subNow');
+      if (!b) return;
+      b.onclick = async () => {
+        b.disabled = true; b.textContent = 'Submitting…';
+        try {
+          const r = await api('recharge-request', { token: sess.token, amount: 10, plan: 'pro' });
+          if (r.request && r.request.status === 'approved') {
+            ME.plan = 'Pro';
+            alert('✓ Pro unlocked — $10 credited. New keys now carry the sk-nfx-pro- prefix.');
+            route();
+          } else if (r.payment) {
+            showPayPanel(r.payment, 'pro');
+          }
+        } catch (e) { alert(e.message); }
+        b.disabled = false; b.textContent = 'Subscribe Now — $10';
+      };
+    }
+  },  notifications: {
+    title: 'User Notifications',
+    render() {
+      return `
+      <h1>User Notifications</h1>
+      <p class="desc">Product updates and account alerts will appear here.</p>
+      <div class="empty">You're all caught up.</div>`;
+    }
+  },
+};
+
+const GROUP_OF = { 'api-keys':'settings', usage:'settings', balance:'billing', billing:'billing', 'token-plan':'subscribe', 'agent-plan':'subscribe', notifications:'notifications' };
+
+function route() {
+  const key = (location.hash || '#profile').slice(1);
+  const page = PAGES[key] || PAGES.profile;
+  if (!ME) return;
+  $('#pageContent').innerHTML = page.render(ME);
+  document.title = page.title + ' — NFlashX API Platform';
+  document.querySelectorAll('.plat-side .grp-list a').forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + key));
+  document.querySelectorAll('.plat-side .grp').forEach(g => {
+    const has = g.querySelector('.grp-list a.on');
+    g.classList.toggle('open', !!has || g.dataset.g === 'settings');
+  });
+  if (page.after) page.after();
+  scrollTo(0, 0);
+}
+window.addEventListener('hashchange', route);
+
+document.querySelectorAll('.plat-side .grp-head').forEach(h => h.onclick = () => h.parentElement.classList.toggle('open'));
+
+(async () => {
+  /* Kết quả quay về từ PayPal (?pay=ok|cancel|error) */
+  const pay = new URLSearchParams(location.search).get('pay');
+  if (pay) {
+    history.replaceState(null, '', '/platform.html#balance');
+    if (pay === 'ok') alert('✓ PayPal payment completed — balance credited. Thanks!');
+    else if (pay === 'cancel') alert('PayPal payment cancelled — nothing charged.');
+    else alert('PayPal payment could not be completed. Contact support if money left your account.');
+  }
+  try {
+    const r = await api('me', { token: sess.token });
+    ME = r.user;
+    sess.name = ME.name || sess.name;
+    if (sess.apiKey) localStorage.setItem('nfx_session', JSON.stringify(sess));
+    $('#topAvatar').textContent = (ME.name || 'N')[0].toUpperCase();
+    if (ME.admin) $('#adminGrp').style.display = '';
+    route();
+  } catch (e) { /* handled by api() */ }
+})();
+
+/* ---------- Usage + Balance (server-backed, hàng thật) ---------- */
+async function loadUsage() {
+  try {
+    const r = await api('usage', { token: sess.token });
+    const by = r.lifetime_by_endpoint || {};
+    const img = by['/api/images'] || by['/v1/images/generations'] || 0;
+    const vid = by['/api/videos'] || by['/v1/videos'] || 0;
+    $('#uReq').textContent = r.lifetime_requests;
+    $('#uToday').textContent = r.today_requests;
+    $('#uImg').textContent = img;
+    $('#uVid').textContent = vid;
+    const daily = r.daily || {};
+    const days = Object.keys(daily).length;
+    $('#uDays').textContent = days;
+    // --- heatmap 53 tuần (371 ngày kết thúc hôm nay) ---
+    const heat = $('#uHeat');
+    if (heat) {
+      let cellsHtml = '';
+      const start = new Date(); start.setHours(0,0,0,0);
+      start.setDate(start.getDate() - 370 - ((start.getDay() + 6) % 7));
+      let active = 0;
+      for (let i = 0; i < 371 + ((new Date().getDay() + 6) % 7); i++) {
+        const d = new Date(start); d.setDate(start.getDate() + i);
+        const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+        const n = daily[key] || 0;
+        if (n > 0) active++;
+        const a = n === 0 ? 0.05 : n <= 2 ? 0.3 : n <= 5 ? 0.55 : n <= 10 ? 0.8 : 1;
+        cellsHtml += `<div style="width:11px;height:11px;border-radius:3px;background:rgba(37,227,154,${a})" title="${key}: ${n} requests"></div>`;
+      }
+      heat.innerHTML = cellsHtml;
+      $('#uActive').textContent = days + ' active day' + (days === 1 ? '' : 's') + ' · ' + r.lifetime_requests + ' total requests';
+      $('#uRange').textContent = (new Date(start)).toISOString().slice(0,10) + ' → ' + new Date().toISOString().slice(0,10);
+    }
+    // --- trend 14 ngày ---
+    const svg = $('#uTrend');
+    if (svg) {
+      const pts = [];
+      for (let i = 13; i >= 0; i--) {
+        const d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate() - i);
+        const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+        pts.push({ key, n: daily[key] || 0, d });
+      }
+      const max = Math.max(1, ...pts.map(p => p.n));
+      const X = i => 50 + i * (640 / 13), Y = n => 180 - (n / max) * 150;
+      let grid = '', labels = '', dotsSvg = '';
+      [0, 0.25, 0.5, 0.75, 1].forEach(f => { grid += `<line x1="40" y1="${180 - f*150}" x2="690" y2="${180 - f*150}" stroke="#222a33"/><text x="8" y="${184 - f*150}" fill="#8a949f" font-size="10">${Math.round(max*f)}</text>`; });
+      pts.forEach((p, i) => { if (i % 2 === 0) labels += `<text x="${X(i)-14}" y="188" fill="#8a949f" font-size="10">${p.key.slice(5)}</text>`;
+        dotsSvg += `<circle cx="${X(i)}" cy="${Y(p.n)}" r="3.5" fill="#25e39a"><title>${p.key}: ${p.n}</title></circle>`; });
+      const line = pts.map((p, i) => `${X(i)},${Y(p.n)}`).join(' ');
+      svg.innerHTML = grid + `<polyline points="${line}" fill="none" stroke="#25e39a" stroke-width="1.8"/>` + dotsSvg + labels;
+    }
+  } catch (e) { console.warn(e.message); }
+}
+async function loadBalance() {
+  try {
+    const r = await api('recharge-status', { token: sess.token });
+    $('#balBig').textContent = '$ ' + Number(r.balance).toFixed(6);
+    $('#balCur').textContent = '$ ' + Number(r.balance).toFixed(6);
+    const box = $('#payRows');
+    if (r.history && r.history.length) {
+      box.innerHTML = r.history.map(h =>
+        `<div class="b" style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)">
+          <b>Recharge $${h.amount}</b><span>${new Date(h.ts*1000).toLocaleString()} — <span style="color:${h.status==='pending'?'#ffb84d':h.status==='approved'?'#25e39a':'#ff6b6b'}">${h.status}</span></span></div>`).join('');
+    } else box.innerHTML = '<div class="no-data">No recharge requests yet</div>';
+  } catch (e) { console.warn(e.message); }
+}
+</script>
+
+<!-- Payment panel — Chuyển khoản VietQR (VN) + PayPal/Card (quốc tế) -->
+<div id="payBackdrop" style="position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:900;display:none;align-items:center;justify-content:center">
+  <div style="background:#0c1016;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:26px;max-width:440px;width:92%;text-align:center;max-height:92vh;overflow-y:auto">
+    <h3 style="font-family:'Space Grotesk';font-size:18px;margin-bottom:4px">Payment</h3>
+    <p style="color:#8a949f;font-size:12.5px;margin-bottom:12px" id="payAmountLine"></p>
+    <div id="payTabs" style="display:flex;gap:8px;justify-content:center;margin-bottom:14px;flex-wrap:wrap">
+      <button id="tabBank" onclick="payTab('bank')" style="background:linear-gradient(92deg,#0ea86f,#25e39a);color:#03130c;border:none;border-radius:10px;padding:8px 16px;font-weight:700;font-size:12.5px;cursor:pointer">🏦 Chuyển khoản VN</button>
+      <button id="tabPaypal" onclick="payTab('paypal')" style="background:rgba(255,255,255,.06);color:#96a3b2;border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:8px 16px;font-weight:700;font-size:12.5px;cursor:pointer">💳 PayPal · Thẻ quốc tế</button>
+    </div>
+
+    <div id="payBank">
+      <div style="background:linear-gradient(180deg,rgba(37,227,154,.07),rgba(37,227,154,.02));border:1px solid rgba(37,227,154,.18);border-radius:16px;padding:18px 16px 14px;display:flex;flex-direction:column;align-items:center;gap:12px">
+        <div style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#7ea8a0;font-weight:700">Quét mã để chuyển tiền</div>
+        <div style="background:#fff;border-radius:12px;padding:10px;line-height:0;box-shadow:0 8px 26px rgba(0,0,0,.4)">
+          <img id="payQR" style="width:236px;height:auto;display:block;border-radius:4px" alt="QR chuyển khoản"
+               onerror="this.parentElement.style.display='none';document.getElementById('payQRFallback').style.display='flex'">
+        </div>
+        <div id="payQRFallback" style="display:none;width:256px;height:120px;align-items:center;justify-content:center;text-align:center;color:#ff9a9a;font-size:12px;line-height:1.5;border:1px dashed rgba(255,120,120,.4);border-radius:10px">Không tải được mã QR<br>Chuyển khoản theo thông tin bên dưới</div>
+        <div style="text-align:center;line-height:1.5">
+          <div style="font-size:15px;font-weight:700;color:#f2f6f9;letter-spacing:.2px" id="payName">—</div>
+          <div style="font-size:13.5px;color:#9df3ca;font-family:'JetBrains Mono',Consolas,monospace;letter-spacing:.8px;margin-top:3px" id="payAcc">—</div>
+        </div>
+        <div style="font-size:9.5px;color:#5c6975;letter-spacing:.14em;text-transform:uppercase;padding-top:2px">Techcombank · Napas 247 · QR tự động</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:14px;flex-wrap:wrap">
+        <span style="font-size:12px;color:#8a949f">Số tiền</span>
+        <b style="font-size:17px;color:#25e39a" id="payAmtVnd">—</b>
+        <span style="font-size:11px;color:#5c6975" id="payAmtUsd"></span>
+      </div>
+      <p style="margin:8px 0 0;font-size:11.5px;color:#6b7784;text-align:center;line-height:1.6">Nội dung chuyển khoản đã gắn sẵn trong mã QR.<br>Vui lòng chuyển <b style="color:#96a3b2">đúng số tiền</b> để hệ thống tự xác nhận.</p>
+    </div>
+
+    <div id="payPaypal" style="display:none;text-align:center">
+      <div style="padding:14px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;margin-bottom:12px">
+        <div style="font-size:26px;margin-bottom:4px">💳</div>
+        <div style="font-weight:700;font-family:'Space Grotesk'">Pay <span id="payPpAmount"></span> with PayPal</div>
+        <div style="color:#8a949f;font-size:12px;margin-top:4px">Popup thanh toán bật tại chỗ — thẻ quốc tế hoặc số dư PayPal.</div>
+      </div>
+      <div id="paypal-button-container" style="min-height:52px"></div>
+      <div id="ppFallback" style="display:none">
+        <button class="btn-dark sm" id="payPpBtn" style="width:100%;background:#ffc439;color:#111;border:none" onclick="startPaypal()">Pay with PayPal →</button>
+        <p style="color:#8a949f;font-size:11.5px;margin-top:6px">Nếu popup bị chặn, bấm nút để mở trang PayPal.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:12px;padding:11px 14px;background:rgba(37,227,154,.07);border:1px solid rgba(37,227,154,.3);border-radius:12px;font-size:12.5px;line-height:1.55;color:#b9c6d2">
+      Mã đối chiếu <b id="payMemo" style="font-family:'JetBrains Mono',monospace;color:#25e39a;letter-spacing:.4px"></b><br>
+      Admin dùng mã này để xác nhận lệnh chuyển của bạn.
+    </div>
+    <button class="btn-dark sm" style="margin-top:14px;width:100%" onclick="closePayPanel()">Đã thanh toán — chờ admin xác nhận</button>
+  </div>
+</div>
+
+<div class="rc-backdrop" id="rcBackdrop">
+  <div class="rc-modal">
+    <div class="rc-head"><b>Recharge</b><button class="rc-close" aria-label="Close">✕</button></div>
+    <div class="rc-reminder">
+      <b>Reminder:</b>
+      <ol>
+        <li>Please ensure that your account has sufficient funds for the transaction.</li>
+        <li>If you encounter transaction issues during the recharge process, please check with the relevant third-party payment platform for confirmation.</li>
+        <li>After completing the recharge, you can go to the <a href="#billing">Payment History</a> to view your transaction records and account balance.</li>
+        <li>If you want to top up using bank transfer, please refer to the <a href="#">Bank Transfer Guide</a>.</li>
+        <li>Please note that sales tax may be applied to the charge based on your location.</li>
+      </ol>
+    </div>
+    <label class="rc-lbl">Recharge Amount</label>
+    <input type="text" id="rcAmount" placeholder="Single recharge amount ranges from $10 to $9999">
+    <label class="rc-agree"><input type="checkbox" id="rcAgree" checked> I have read and agree to the <a href="#">Privacy Policy</a> and <a href="#">Terms and Conditions</a>.</label>
+    <div class="rc-btns">
+      <button class="rc-cancel" id="rcCancel">Cancel</button>
+      <button class="rc-confirm" id="rcConfirm" disabled style="opacity:.45;cursor:not-allowed">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div class="lc-panel" id="lcPanel">
+  <div class="lc-head">
+    <img src="assets/logo.svg" alt="">
+    <b>NFlashX Support</b>
+    <button class="lc-ic" title="Email support" onclick="location.href='mailto:support@nflashx.com'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg></button>
+    <button class="lc-ic" id="lcMin" title="Minimize"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+    <button class="lc-ic" id="lcClose" title="Close"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+  </div>
+  <div class="lc-body" id="lcBody">
+    <div class="lc-row">
+      <span class="lc-ava"><img src="assets/logo.svg" alt=""></span>
+      <div class="lc-bubble">Hi, I'm NFlashX AI support. I can help with product usage, accounts, subscriptions, Credits, and more. How can I help you?</div>
+    </div>
+    <div class="lc-quick" id="lcQuick">
+      <a href="#" data-q="How to get an API Key">How to get an API Key</a>
+      <a href="#" data-q="How to connect a model">How to connect a model</a>
+      <a href="#" data-q="Model pricing">Model pricing</a>
+      <a href="#" data-q="What is Tokenplan? What plans are available?">What is Tokenplan? What plans are available?</a>
+      <a href="#" data-q="How to subscribe to Tokenplan">How to subscribe to Tokenplan</a>
+      <a href="#" data-q="How to troubleshoot API errors">How to troubleshoot API errors</a>
+    </div>
+    <div class="lc-hint">Click a quick question to send</div>
+  </div>
+  <div class="lc-input">
+    <input id="lcInput" type="text" placeholder="Enter your question">
+    <div class="lc-sendrow"><button class="lc-send" id="lcSend">Send</button></div>
+  </div>
+</div>
+
+<div class="kp-backdrop" id="kpBackdrop">
+  <div class="kp-card">
+    <b id="kpTitle">Create new secret key</b>
+    <input id="kpInput" type="text" placeholder="Please enter a key name" maxlength="40">
+    <div class="kp-btns">
+      <button class="kp-cancel" id="kpCancel">Cancel</button>
+      <button class="kp-save" id="kpSave" disabled>Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* QR placeholders */
+(function () {
+  document.querySelectorAll('.qr-item .qr').forEach((box, qi) => {
+    const n = 17, cell = 4, size = n * cell;
+    let rects = ''; let seed = 7 + qi * 13;
+    const rnd = () => { seed = (seed * 1103515245 + 12345) % 2147483648; return seed / 2147483648; };
+    const color = box.closest('.qr-item').classList.contains('discord') ? '#5865f2' : '#2aae67';
+    const finder = (x, y) => {
+      rects += '<rect x="' + x + '" y="' + y + '" width="' + 7*cell + '" height="' + 7*cell + '" fill="none" stroke="' + color + '" stroke-width="' + cell + '"/>';
+      rects += '<rect x="' + (x+2*cell) + '" y="' + (y+2*cell) + '" width="' + 3*cell + '" height="' + 3*cell + '" fill="' + color + '"/>';
+    };
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+      const inF = (x < 8 && y < 8) || (x >= n-8 && y < 8) || (x < 8 && y >= n-8);
+      if (inF) continue;
+      if (rnd() > 0.52) rects += '<rect x="' + x*cell + '" y="' + y*cell + '" width="' + cell + '" height="' + cell + '" fill="' + color + '"/>';
+    }
+    finder(0, 0); finder(size - 7*cell, 0); finder(0, size - 7*cell);
+    box.innerHTML = '<svg viewBox="0 0 ' + size + ' ' + size + '" width="100%" height="100%">' + rects + '</svg>';
+  });
+})();
+
+/* recharge modal */
+(function () {
+  const bd = document.getElementById('rcBackdrop');
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-recharge]');
+    if (!b) return;
+    e.preventDefault();
+    document.getElementById('rcBackdrop').classList.add('on');
+    document.getElementById('rcAgree').checked = true;
+    const amtIn = document.getElementById('rcAmount');
+    amtIn.dispatchEvent(new Event('input'));      // chạy lại validation
+    setTimeout(() => amtIn.focus(), 60);
+  });
+  bd.querySelector('.rc-close').onclick = () => bd.classList.remove('on');
+  document.getElementById('rcCancel').onclick = () => bd.classList.remove('on');
+  bd.addEventListener('click', e => { if (e.target === bd) bd.classList.remove('on'); });
+  const amt = document.getElementById('rcAmount'), agree = document.getElementById('rcAgree'), ok = document.getElementById('rcConfirm');
+  function check() {
+    const v = parseFloat(amt.value);
+    const valid = agree.checked && v >= 10 && v <= 9999;
+    ok.classList.toggle('ok', valid);
+    ok.disabled = !valid;                 // bật/tắt thật sự (trước chỉ toggle class → nút chết)
+    ok.style.opacity = valid ? '1' : '.45';
+    ok.style.cursor = valid ? 'pointer' : 'not-allowed';
+  }
+  amt.addEventListener('input', check); agree.addEventListener('change', check);
+  check();
+  // mở modal → reset về trạng thái mặc định + tính lại
+  const openRecharge = () => {
+    const b = document.getElementById('rcBackdrop');
+    b.classList.add('on');
+    document.getElementById('rcAgree').checked = true;
+    check();
+    setTimeout(() => document.getElementById('rcAmount').focus(), 60);
+  };
+  ok.onclick = async () => {
+    if (!ok.classList.contains('ok')) {
+      // bấm khi chưa hợp lệ → nói rõ lý do thay vì im lặng
+      const v = parseFloat(amt.value);
+      if (!(v >= 10 && v <= 9999)) alert('Amount must be between $10 and $9,999.');
+      else if (!agree.checked) alert('Tick "I have read and agree to the Privacy Policy and Terms and Conditions" first.');
+      return;
+    }
+    ok.textContent = 'Submitting…';
+    try {
+      const r = await api('recharge-request', { token: sess.token, amount: parseFloat(amt.value) });
+      bd.classList.remove('on');
+      if (r.request && r.request.status === 'approved') {
+        alert('✓ Credited $' + r.request.amount + ' instantly (admin account).');
+      } else if (r.payment) {
+        showPayPanel(r.payment, null);
+      } else {
+      }
+      loadBalance();
+    } catch (e) { alert(e.message); }
+    ok.textContent = ok.dataset.orig || 'Confirm Recharge';
+  };
+})();
+
+/* ---------- payment panel (VietQR + PayPal) ---------- */
+let PAY_REQ_ID = null, PAY_AMOUNT = null, PAY_PLAN = null;
+function showPayPanel(info, plan) {
+  document.getElementById('payAmountLine').textContent = 'Nạp $' + info.amount + ' vào tài khoản NFlashX';
+  const hasBank = !!info.vietqr, hasPp = !!info.paypal;
+  document.getElementById('tabBank').style.display = hasBank ? '' : 'none';
+  document.getElementById('tabPaypal').style.display = hasPp ? '' : 'none';
+  if (hasBank) {
+    document.getElementById('payQR').src = info.vietqr;
+    document.getElementById('payName').textContent = info.name || '';
+    document.getElementById('payAcc').textContent = info.account || '';
+    const vndEl = document.getElementById('payAmtVnd');
+    if (vndEl) vndEl.textContent = (info.vnd || 0).toLocaleString('vi-VN') + ' đ';
+    const usdEl = document.getElementById('payAmtUsd');
+    if (usdEl && info.rate) usdEl.textContent = '(≈ $' + info.amount + ' · 1$ = ' + Number(info.rate).toLocaleString('vi-VN') + 'đ)';
+  }
+  document.getElementById('payMemo').textContent = info.memo;
+  PAY_REQ_ID = info.memo.replace(/^NFX-/, '');
+  PAY_AMOUNT = info.amount; PAY_PLAN = plan || null;
+  document.getElementById('payPpAmount').textContent = '$' + info.amount;
+  payTab(hasBank ? 'bank' : 'paypal');
+  document.getElementById('payBackdrop').style.display = 'flex';
+  if (hasPp) initPaypalSdk();
+}
+function payTab(which) {
+  document.getElementById('payBank').style.display = which === 'bank' ? 'block' : 'none';
+  const pp = document.getElementById('payPaypal');
+  if (pp) pp.style.display = which === 'paypal' ? 'block' : 'none';
+  const on = 'background:linear-gradient(92deg,#0ea86f,#25e39a);color:#03130c;border:none;border-radius:10px;padding:8px 16px;font-weight:700;font-size:12.5px;cursor:pointer';
+  const off = 'background:rgba(255,255,255,.06);color:#96a3b2;border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:8px 16px;font-weight:700;font-size:12.5px;cursor:pointer';
+  document.getElementById('tabBank').style.cssText = which === 'bank' ? on : off;
+  const tp = document.getElementById('tabPaypal');
+  if (tp) tp.style.cssText = which === 'paypal' ? on : off;
+}
+async function startPaypal() {
+  const b = document.getElementById('payPpBtn');
+  b.disabled = true; b.textContent = 'Đang tạo lệnh…';
+  try {
+    const r = await api('paypal-create', { token: sess.token, amount: PAY_AMOUNT, plan: PAY_PLAN });
+    location.href = r.approve_url;   // redirect sang PayPal
+  } catch (e) { alert(e.message); b.disabled = false; b.textContent = 'Pay with PayPal →'; }
+}
+
+/* ---------- PayPal JS SDK — popup thanh toán TẠI CHỖ ---------- */
+let PP_CLIENT_ID = null, PP_REQ_ID = null;
+async function initPaypalSdk() {
+  const box = document.getElementById('paypal-button-container');
+  if (!box) return;
+  try {
+    const c = await api('paypal-client', {});
+    if (!c.client_id) { document.getElementById('ppFallback').style.display = 'block'; return; }
+    if (PP_CLIENT_ID !== c.client_id) {
+      PP_CLIENT_ID = c.client_id;
+      await new Promise((res, rej) => {
+        const s = document.createElement('script');
+        s.src = 'https://www.paypal.com/sdk/js?client-id=' + encodeURIComponent(c.client_id)
+              + '&currency=USD&components=buttons&intent=capture&enable-funding=card';
+        s.onload = res; s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
+    box.innerHTML = '';
+    paypal.Buttons({
+      style: { layout: 'vertical', shape: 'pill', color: 'gold', label: 'paypal', height: 48 },
+      createOrder: async () => {
+        const r = await api('paypal-sdk-create', { token: sess.token, amount: PAY_AMOUNT, plan: PAY_PLAN });
+        PP_REQ_ID = r.request_id;
+        return r.id;
+      },
+      onApprove: async (data) => {
+        const r = await api('paypal-sdk-capture', { token: sess.token, orderID: data.orderID, request_id: PP_REQ_ID });
+        closePayPanel();
+        if (r.amount && r.balance != null) {
+          alert('✓ Thanh toán thành công — đã cộng $' + r.amount + '. Số dư hiện tại: $' + r.balance);
+        } else {
+          alert('✓ Đã cộng $' + r.amount + ' vào số dư.');
+        }
+        try { const me = await api('me', { token: sess.token }); ME = me.user; route(); } catch (_) {}
+      },
+      onCancel: () => { alert('Đã huỷ thanh toán — không trừ tiền.'); },
+      onError: (err) => {
+        console.warn(err);
+        document.getElementById('ppFallback').style.display = 'block';
+      }
+    }).render('#paypal-button-container');
+  } catch (e) {
+    console.warn('PayPal SDK:', e);
+    const fb = document.getElementById('ppFallback');
+    if (fb) fb.style.display = 'block';
+  }
+}
+async function submitPayTxid() {
+  const tx = document.getElementById('payTxid').value.trim();
+  if (!tx) return alert('Dán TXID (transaction hash) từ ví/sàn của bạn vào.');
+  const b = document.getElementById('payTxidBtn');
+  b.disabled = true; b.textContent = 'Submitting…';
+  try {
+    await api('topup-txid', { token: sess.token, id: PAY_REQ_ID, txid: tx });
+    alert('TXID submitted — admin sẽ đối chiếu trên Tronscan và Approve.');
+    closePayPanel();
+  } catch (e) { alert(e.message); }
+  b.disabled = false; b.textContent = 'Submit TXID';
+}
+function closePayPanel() {
+  document.getElementById('payBackdrop').style.display = 'none';
+  loadBalance();
+}
+
+/* ---------- live chat (Agnes Support style) ---------- */
+(function () {
+  const btn = document.querySelector('.live-chat'), panel = document.getElementById('lcPanel');
+  btn.onclick = () => { panel.classList.add('on'); panel.classList.remove('min'); };
+  document.getElementById('lcClose').onclick = () => panel.classList.remove('on');
+  document.getElementById('lcMin').onclick = () => panel.classList.toggle('min');
+
+  const body = document.getElementById('lcBody'), input = document.getElementById('lcInput');
+  const send = document.getElementById('lcSend');
+  const ANSWERS = {
+    'How to get an API Key': 'Sign in, open Settings → API Keys and click "Create new secret key". Your key starts with sk-nfx-… and has full access on the Free plan.',
+    'How to connect a model': 'Use the OpenAI-compatible base URL ' + location.origin + '/v1 with your key, then set "model" to nflashx-1.0-flash.',
+    'Model pricing': 'Text (Flash): $0.10/M input, $0.15/M output — free in trial. Images: from $0.010/image. Video: $0.025/second at 720P.',
+    'What is Tokenplan? What plans are available?': 'Token Plan gives starter quotas per model (requests, images, video seconds). Agent Plan adds shared Credits across all modalities — Lite, Plus, Pro and Max tiers.',
+    'How to subscribe to Tokenplan': 'Open Subscribe → Token Plan in the sidebar and pick a tier. On Agent Plan, credits refresh every 5 hours.',
+    'How to troubleshoot API errors': 'First check your API key and the Base URL (must end with /v1). Then read the error code: 401 wrong key, 429 rate limit, 400 invalid parameters.'
+  };
+  const GENERIC = 'Thanks for your question! Our team will follow up by email. Meanwhile, tap one of the quick questions above for instant answers.';
+
+  function bubble(text, me) {
+    const row = document.createElement('div');
+    row.className = 'lc-row' + (me ? ' me' : '');
+    if (!me) row.innerHTML = '<span class="lc-ava"><img src="assets/logo.svg" alt=""></span>';
+    const b = document.createElement('div');
+    b.className = 'lc-bubble'; b.textContent = text;
+    row.appendChild(b);
+    body.appendChild(row);
+    body.scrollTop = body.scrollHeight;
+    const hint = body.querySelector('.lc-hint');
+    if (hint && !me) return;
+    if (me) { const q = body.querySelector('.lc-quick'); if (q) q.style.display = 'none'; const h = body.querySelector('.lc-hint'); if (h) h.style.display = 'none'; }
+  }
+  function ask(q) {
+    bubble(q, true);
+    setTimeout(() => bubble(ANSWERS[q] || GENERIC, false), 500);
+  }
+  document.getElementById('lcQuick').addEventListener('click', e => {
+    const a = e.target.closest('a'); if (!a) return;
+    e.preventDefault(); ask(a.dataset.q);
+  });
+  function sendMsg() {
+    const t = input.value.trim(); if (!t) return;
+    input.value = ''; ask(t);
+    send.classList.remove('on');
+  }
+  send.onclick = sendMsg;
+  input.addEventListener('input', () => send.classList.toggle('on', input.value.trim().length > 0));
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') sendMsg(); });
+})();
+
+/* ---------- API keys: server-backed create / rename / delete / copy ---------- */
+let KEYS = [];
+async function loadKeys() {
+  try {
+    const r = await api('keys', { token: sess.token });
+    KEYS = r.keys;
+    sess.apiKey = KEYS.length ? KEYS[0].key : sess.apiKey;
+    renderKeyRows();
+  } catch (e) { console.warn(e.message); }
+}
+function renderKeyRows() {
+  const tb = document.getElementById('keyRows');
+  if (!tb) return;
+  if (!KEYS.length) {
+    tb.innerHTML = '<tr><td colspan="5"><div class="no-data">No keys yet — click <b>Create new secret key</b> above. New accounts start with zero keys by design.</div></td></tr>';
+    return;
+  }
+  const isPro = String((ME && ME.plan) || 'Free').toLowerCase() === 'pro';
+  const ICONS = {
+    copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg>',
+    edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 3a2.8 2.8 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>',
+    del: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/></svg>'
+  };
+  tb.innerHTML = KEYS.map((k, i) => {
+    const pro = k.key.startsWith('sk-nfx-pro-');
+    const badge = `<span style="display:inline-block;margin-left:8px;padding:2px 9px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:.05em;${pro ? 'color:#03130c;background:linear-gradient(92deg,#0ea86f,#25e39a)' : 'color:#96a3b2;border:1px solid rgba(255,255,255,.14)'}">${pro ? 'PRO' : 'FREE'}</span>`;
+    return `
+    <tr>
+      <td style="color:#14181d;font-weight:500">${k.name.replace(/</g, '&lt;')}${badge}</td>
+      <td class="mono">${k.key.slice(0, 12)}...${k.key.slice(-6)}</td>
+      <td>${k.created} UTC</td>
+      <td>${k.last_used}</td>
+      <td><span class="ops">
+        <button title="Copy key" data-op="copy" data-i="${i}">${ICONS.copy}</button>
+        <button title="Rename" data-op="rename" data-i="${i}">${ICONS.edit}</button>
+        <button title="Delete" data-op="del" data-i="${i}">${ICONS.del}</button>
+      </span></td>
+    </tr>`;
+  }).join('');
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('.ops button'); if (!b) return;
+  const i = +b.dataset.i, op = b.dataset.op, k = KEYS[i];
+  if (op === 'copy') { navigator.clipboard.writeText(k.key).catch(() => {}); b.style.color = '#25c93f'; setTimeout(() => b.style.color = '', 1000); }
+  if (op === 'rename') openKeyPopup('Rename the key', k.name, async name => {
+    await api('keys/rename', { token: sess.token, key: k.key, name });
+    loadKeys();
+  });
+  if (op === 'del') {
+    if (!confirm('Delete the key "' + k.name + '"? Apps using it will stop working.')) return;
+    api('keys/delete', { token: sess.token, key: k.key }).then(loadKeys).catch(err => alert(err.message));
+  }
+});
+document.addEventListener('click', e => {
+  const b = e.target.closest('#createKey'); if (!b) return;
+  openKeyPopup('Create new secret key', '', async name => {
+    try {
+      const r = await api('keys/create', { token: sess.token, name });
+      KEYS = r.keys; renderKeyRows();
+    } catch (err) { alert(err.message); }
+  });
+});
+
+/* mini popup dùng chung cho create + rename */
+const kpBackdrop = document.getElementById('kpBackdrop');
+let kpSaveCb = null;
+function openKeyPopup(title, preset, onSave) {
+  document.getElementById('kpTitle').textContent = title;
+  const inp = document.getElementById('kpInput');
+  inp.value = preset || '';
+  document.getElementById('kpSave').disabled = !preset;
+  kpSaveCb = onSave;
+  kpBackdrop.classList.add('on');
+  setTimeout(() => inp.focus(), 80);
+}
+document.getElementById('kpInput').addEventListener('input', e => {
+  document.getElementById('kpSave').disabled = !e.target.value.trim();
+});
+document.getElementById('kpCancel').onclick = () => kpBackdrop.classList.remove('on');
+kpBackdrop.addEventListener('click', e => { if (e.target === kpBackdrop) kpBackdrop.classList.remove('on'); });
+document.getElementById('kpSave').onclick = async () => {
+  const name = document.getElementById('kpInput').value.trim();
+  if (!name || !kpSaveCb) return;
+  kpBackdrop.classList.remove('on');
+  await kpSaveCb(name);
+};
+</script>
+</body>
+</html>

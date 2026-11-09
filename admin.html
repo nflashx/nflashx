@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Console — NFlashX</title>
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#04060a;--bg2:#070b12;--ink:#f2f6f9;--mut:#96a3b2;--dim:#5c6975;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.14);--card:rgba(255,255,255,.03);--green:#25e39a;--teal:#12d7c6;--red:#ff6b6b;--amber:#ffb84d;--radius:16px;--mono:"JetBrains Mono",Consolas,monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:"Inter",system-ui,sans-serif;min-height:100vh}
+header{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(4,6,10,.9);backdrop-filter:blur(10px);z-index:10}
+.brand{display:flex;align-items:center;gap:10px;font-family:"Space Grotesk";font-weight:700;font-size:18px;text-decoration:none;color:var(--ink)}
+.brand img{width:30px;height:30px}
+.brand span{font-size:11px;color:var(--green);border:1px solid rgba(37,227,154,.4);padding:2px 8px;border-radius:999px;letter-spacing:.08em}
+header .right{display:flex;gap:12px;align-items:center;font-size:13px;color:var(--mut)}
+header .right a{color:var(--mut);text-decoration:none}
+header .right a:hover{color:#fff}
+main{max-width:1240px;margin:0 auto;padding:28px 20px 60px}
+h1{font-family:"Space Grotesk";font-size:26px;margin-bottom:4px}
+.sub{color:var(--dim);font-size:13.5px;margin-bottom:22px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:26px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
+.card .n{font-family:"Space Grotesk";font-size:26px;font-weight:700}
+.card .l{color:var(--dim);font-size:12px;margin-top:4px;text-transform:uppercase;letter-spacing:.06em}
+.wrap{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:24px;overflow-x:auto}
+.wrap h2{font-size:15px;font-family:"Space Grotesk";margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:900px}
+th{color:var(--dim);text-transform:uppercase;font-size:10.5px;letter-spacing:.08em;text-align:left;padding:8px 10px;border-bottom:1px solid var(--line2)}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:hover td{background:rgba(255,255,255,.02)}
+.mono{font-family:var(--mono);font-size:12px}
+.tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:600}
+.tag.free{color:var(--mut);border:1px solid var(--line2)}
+.tag.pro{color:#03130c;background:var(--green)}
+.tag.banned{color:#ffb0b0;border:1px solid rgba(255,80,80,.4);background:rgba(255,80,80,.08)}
+.tag.admin{color:#c9b8ff;border:1px solid rgba(139,92,246,.5);background:rgba(139,92,246,.1)}
+.tag.ok{color:#9df3ca}
+.tag.pend{color:var(--amber)}
+.btn{border:1px solid var(--line2);background:rgba(255,255,255,.05);color:var(--mut);font-size:11.5px;font-weight:600;padding:5px 10px;border-radius:8px;cursor:pointer;transition:.15s;white-space:nowrap}
+.btn:hover{color:#fff;border-color:var(--green)}
+.btn.danger:hover{border-color:var(--red);color:var(--red)}
+.btn.ok{background:var(--green);border-color:var(--green);color:#03130c}
+#msg{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(10,16,22,.95);border:1px solid rgba(37,227,154,.5);color:#9df3ca;padding:10px 20px;border-radius:999px;font-size:13px;opacity:0;transition:.3s;pointer-events:none;z-index:99}
+#msg.on{opacity:1}
+.empty{color:var(--dim);font-size:13px;padding:14px 4px}
+</style>
+</head>
+<body>
+<header>
+  <a class="brand" href="platform.html"><img src="assets/logo.svg" alt=""> NFlashX <span>ADMIN</span></a>
+  <div class="right"><span id="whoami"></span><a href="platform.html">← Platform</a></div>
+</header>
+<main>
+  <h1>Admin Console</h1>
+  <div class="sub">Người dùng · API keys · IP · Usage hôm nay · Kiểm soát spam — dữ liệu thật từ server.</div>
+
+  <div class="cards">
+    <div class="card"><div class="n" id="cUsers">…</div><div class="l">Accounts</div></div>
+    <div class="card"><div class="n" id="cKeys">…</div><div class="l">API Keys</div></div>
+    <div class="card"><div class="n" id="cToday">…</div><div class="l">Requests Today</div></div>
+    <div class="card"><div class="n" id="cTUsers">…</div><div class="l">Active Users Today</div></div>
+    <div class="card"><div class="n" id="cTopups">…</div><div class="l">Pending Top-ups</div></div>
+  </div>
+
+  <div class="wrap">
+    <h2>Recent Requests (50 gần nhất)</h2>
+    <table id="tRecent"><thead><tr><th>Time</th><th>User</th><th>Key</th><th>Endpoint</th><th>IP</th></tr></thead>
+    <tbody><tr><td colspan="5" class="empty">Loading…</td></tr></tbody></table>
+  </div>
+
+  <div class="wrap">
+    <h2>Payment Settings — tài khoản nhận tiền (VietQR)</h2>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:10px">
+      <label style="font-size:12px;color:#96a3b2">Bank code (VCB, MBB, TCB, VTT…)<br>
+        <input id="pcBank" class="mono" placeholder="VCB" style="background:#070b12;border:1px solid rgba(255,255,255,.14);color:#f2f6f9;border-radius:8px;padding:8px;width:130px"></label>
+      <label style="font-size:12px;color:#96a3b2">Số tài khoản<br>
+        <input id="pcAccount" class="mono" placeholder="0123456789" style="background:#070b12;border:1px solid rgba(255,255,255,.14);color:#f2f6f9;border-radius:8px;padding:8px;width:180px"></label>
+      <label style="font-size:12px;color:#96a3b2">Tên chủ tài khoản<br>
+        <input id="pcName" placeholder="NGUYEN VAN A" style="background:#070b12;border:1px solid rgba(255,255,255,.14);color:#f2f6f9;border-radius:8px;padding:8px;width:220px"></label>
+      <label style="font-size:12px;color:#96a3b2">🪙 USDT TRC20 (cho khách quốc tế — tùy chọn)<br>
+        <input id="pcUsdt" class="mono" placeholder="T… địa chỉ ví nhận USDT" style="background:#070b12;border:1px solid rgba(255,255,255,.14);color:#9df3ca;border-radius:8px;padding:8px;width:300px"></label>
+      <button class="btn ok" id="pcSave">Save</button>
+    </div>
+    <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)">
+      <h2 style="font-size:13px;margin-bottom:8px">💳 PayPal (thẻ quốc tế + số dư PayPal — tự động cộng)</h2>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+        <label style="font-size:12px;color:#96a3b2">Client ID<br>
+          <input id="ppId" class="mono" placeholder="AeXxxx… từ developer.paypal.com" style="background:#070b12;border:1px solid rgba(255,255,255,.14);color:#f2f6f9;border-radius:8px;padding:8px;width:300px"></label>
+        <label style="font-size:12px;color:#96a3b2">Secret<br>
+          <input id="ppSecret" class="mono" type="password" placeholder="EFxxxx…" style="background:#070b12;border:1px solid rgba(255,255,255,.14);color:#f2f6f9;border-radius:8px;padding:8px;width:200px"></label>
+        <label style="font-size:12px;color:#96a3b2">Mode<br>
+          <select id="ppMode" style="background:#070b12;border:1px solid rgba(255,255,255,.14);color:#f2f6f9;border-radius:8px;padding:8px"><option value="sandbox">sandbox (test)</option><option value="live">live (tiền thật)</option></select></label>
+        <button class="btn ok" id="ppSave">Save PayPal</button>
+      </div>
+      <div id="ppState" class="empty">Loading…</div>
+    </div>
+    </div>
+    <div id="pcState" class="empty">Loading…</div>
+  </div>
+
+  <div class="wrap">
+    <h2>Pending Recharge Requests</h2>
+    <table id="tTopups"><thead><tr><th>Time</th><th>User</th><th>Amount</th><th>Memo</th><th>Status</th><th>Action</th></tr></thead>
+    <tbody><tr><td colspan="6" class="empty">Loading…</td></tr></tbody></table>
+  </div>
+
+  <div class="wrap">
+    <h2>All Users &amp; Keys</h2>
+    <table id="tUsers"><thead><tr>
+      <th>Email</th><th>Name</th><th>Provider</th><th>Plan</th><th>Keys</th><th>Today</th><th>Total</th><th>Last IP</th><th>Balance</th><th>Status</th><th>Actions</th>
+    </tr></thead><tbody><tr><td colspan="11" class="empty">Loading…</td></tr></tbody></table>
+  </div>
+</main>
+<div id="msg"></div>
+<script>
+const sess = JSON.parse(localStorage.getItem('nfx_session') || 'null');
+if (!sess || !sess.token) location.replace('login.html');
+const api = (p, body) => fetch(p, {
+  method: 'POST', headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(body || {})
+}).then(async r => {
+  const j = await r.json();
+  if (r.status === 401) { localStorage.removeItem('nfx_session'); location.href = 'login.html'; }
+  if (!r.ok) throw new Error(j.error || 'Request failed');
+  return j;
+});
+const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+function toast(t){ const m=document.getElementById('msg'); m.textContent=t; m.classList.add('on'); setTimeout(()=>m.classList.remove('on'),2500); }
+const dt = ts => ts ? new Date(ts*1000).toLocaleString() : '—';
+
+async function adminCall(path, body){ return api('/api' + path, Object.assign({ token: sess.token }, body || {})); }
+
+async function loadStats(){
+  const r = await adminCall('/admin/stats');
+  document.getElementById('cToday').textContent = r.today_total;
+  document.getElementById('cTUsers').textContent = r.today_users;
+  document.getElementById('cTopups').textContent = r.pending_topups;
+  const tb = document.querySelector('#tRecent tbody');
+  tb.innerHTML = r.recent.length ? r.recent.map(x =>
+    `<tr><td class="mono">${dt(x.ts)}</td><td>${esc(x.email)}</td><td class="mono">${esc(x.api_key)}</td><td class="mono">${esc(x.endpoint)}</td><td class="mono">${esc(x.ip||'—')}</td></tr>`
+  ).join('') : '<tr><td colspan="5" class="empty">Chưa có request nào hôm nay.</td></tr>';
+}
+async function loadTopups(){
+  const r = await adminCall('/admin/topups');
+  const list = (r.topups||[]).slice().reverse();
+  const tb = document.querySelector('#tTopups tbody');
+  tb.innerHTML = list.length ? list.map(t =>
+    `<tr><td class="mono">${dt(t.ts)}</td><td>${esc(t.email)}</td><td class="mono">$${t.amount}${t.plan ? ' <span class="tag pro">PLAN ' + esc(t.plan).toUpperCase() + '</span>' : ''}</td>
+     <td class="mono">NFX-${esc(t.id)}${t.txid ? `<br><a href="https://tronscan.org/#/transaction/${esc(t.txid)}" target="_blank" style="color:#25e39a;font-size:11px">Tronscan: ${esc(t.txid.slice(0,10))}… ↗</a>` : ''}</td>
+     <td><span class="tag ${t.status==='pending'?'pend':t.status==='approved'?'ok':'banned'}">${t.status}</span></td>
+     <td>${t.status==='pending' ? `<button class="btn ok" onclick="topup('${t.id}','approve')">Approve</button>
+        <button class="btn danger" onclick="topup('${t.id}','reject')">Reject</button>` : '—'}</td></tr>`
+  ).join('') : '<tr><td colspan="6" class="empty">Không có yêu cầu nạp tiền nào.</td></tr>';
+}
+async function loadPayCfg(){
+  const r = await adminCall('/admin/payment-cfg', { action: 'payment-cfg' });
+  const c = r.config || {};
+  document.getElementById('pcBank').value = c.bank || '';
+  document.getElementById('pcAccount').value = c.account || '';
+  document.getElementById('pcName').value = c.name || '';
+  document.getElementById('pcUsdt').value = c.usdt || '';
+  document.getElementById('pcState').textContent = c.bank
+    ? '✓ Đã cấu hình: ' + c.bank + ' / ' + c.account + (c.usdt ? ' | USDT: ' + c.usdt.slice(0, 10) + '…' : ' | chưa có USDT (khách quốc tế sẽ không thấy tab Crypto)')
+    : '⚠ Chưa cấu hình — khách bấm Recharge sẽ KHÔNG thấy QR. Điền bank + số TK + tên chủ TK rồi Save.';
+}
+document.getElementById('pcSave').onclick = async () => {
+  try {
+    const r = await adminCall('/admin/payment-cfg', { action: 'payment-cfg',
+      bank: document.getElementById('pcBank').value, account: document.getElementById('pcAccount').value,
+      name: document.getElementById('pcName').value, usdt: document.getElementById('pcUsdt').value });
+    toast('Payment settings saved — VietQR + USDT đã bật.');
+    document.getElementById('pcState').textContent = '✓ Đã cấu hình: ' + r.config.bank + ' / ' + r.config.account;
+  } catch (e) { toast('Lỗi: ' + e.message); }
+};
+async function loadPpCfg(){
+  const r = await adminCall('/admin/paypal-cfg', { action: 'paypal-cfg' });
+  document.getElementById('ppId').value = r.client_id || '';
+  document.getElementById('ppMode').value = r.mode || 'live';
+  document.getElementById('ppState').textContent = r.configured
+    ? '✓ PayPal đã cấu hình (mode: ' + r.mode + ') — tab PayPal hiện cho khách.'
+    : '⚠ Chưa cấu hình — điền Client ID + Secret từ developer.paypal.com → My Apps & Credentials → Live.';
+}
+document.getElementById('ppSave').onclick = async () => {
+  try {
+    const r = await adminCall('/admin/paypal-cfg', { action: 'paypal-cfg',
+      client_id: document.getElementById('ppId').value, secret: document.getElementById('ppSecret').value,
+      mode: document.getElementById('ppMode').value });
+    toast(r.configured ? 'PayPal saved — tab PayPal đã bật cho khách.' : 'Đã lưu nhưng thiếu Client ID/Secret.');
+    loadPpCfg();
+  } catch (e) { toast('Lỗi: ' + e.message); }
+};
+async function topup(id, decision){
+  await api('/api/auth/admin/ban', { token: sess.token, action:'topup', id, decision });
+  toast('Top-up ' + decision + 'd');
+  loadTopups(); loadUsers();
+}
+async function loadUsers(){
+  const r = await adminCall('/admin/users');
+  document.getElementById('cUsers').textContent = r.users.length;
+  document.getElementById('cKeys').textContent = r.users.reduce((a,u)=>a+u.keys,0);
+  const tb = document.querySelector('#tUsers tbody');
+  tb.innerHTML = r.users.map(u => {
+    const status = u.banned ? '<span class="tag banned">banned</span>' : u.admin ? '<span class="tag admin">admin</span>' : '<span class="tag ok">active</span>';
+    const plan = `<span class="tag ${String(u.plan).toLowerCase()==='pro'?'pro':'free'}">${esc(u.plan)}</span>`;
+    return `<tr>
+      <td class="mono">${esc(u.email)}</td><td>${esc(u.name||'—')}</td><td>${esc(u.provider)}</td>
+      <td>${plan}</td>
+      <td title="${esc((u.key_list||[]).join(', '))}">${u.keys}</td>
+      <td style="color:${u.today_requests>20?'var(--amber)':'inherit'}"><b>${u.today_requests}</b></td>
+      <td>${u.total_requests}</td>
+      <td class="mono">${esc(u.last_ip||'—')}</td>
+      <td class="mono">$${Number(u.balance||0).toFixed(2)}</td>
+      <td>${status}</td>
+      <td style="white-space:nowrap">
+        ${u.admin
+          ? '<span class="tag admin">protected</span>'
+          : `<button class="btn" onclick="setTier('${esc(u.email)}','${u.plan.toLowerCase()==='pro'?'free':'pro'}')">→ ${u.plan.toLowerCase()==='pro'?'Free':'Pro'}</button>
+        ${u.banned
+          ? `<button class="btn" onclick="ban('${esc(u.email)}','unban')">Unban</button>`
+          : `<button class="btn danger" onclick="ban('${esc(u.email)}','ban')">Ban</button>`}
+        <button class="btn danger" onclick="delUser('${esc(u.email)}')">Delete</button>`}
+      </td></tr>`;
+  }).join('');
+}
+async function ban(email, action){ await api('/api/auth/admin/ban', { token: sess.token, action, email }); toast(email + ' → ' + action); loadUsers(); }
+async function delUser(email){
+  if (!confirm('XÓA VĨNH VIỄN account ' + email + '?\n(Mất luôn keys, sessions, usage — không khôi phục được)')) return;
+  await api('/api/auth/admin/ban', { token: sess.token, action:'delete', email });
+  toast(email + ' deleted');
+  loadUsers();
+}
+async function setTier(email, tier){ await api('/api/auth/admin/ban', { token: sess.token, action:'set-tier', email, tier }); toast(email + ' → tier ' + tier); loadUsers(); }
+
+(async () => {
+  document.getElementById('whoami').textContent = sess.email || '';
+  try {
+    await loadStats();
+    await loadTopups();
+    await loadPayCfg();
+    await loadPpCfg();
+    await loadUsers();
+  } catch (e) {
+    document.querySelector('main').innerHTML = `<h1>403</h1><div class="sub">${esc(e.message)}</div><a href="platform.html" style="color:var(--green)">← Về Platform</a>`;
+  }
+})();
+</script>
+</body>
+</html>

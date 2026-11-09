@@ -1,0 +1,42 @@
+{
+  "math_percent": {
+    "q": "A jacket costs $200. The shop applies a 20% discount, then adds 10% tax on the discounted price. What is the final price? Show brief reasoning.",
+    "a": "The final price is **$176**.\n\n- Discounted price: $200 × 0.80 = $160  \n- Price after tax: $160 × 1.10 = $176"
+  },
+  "logic_bat": {
+    "q": "A bat and a ball cost $1.10 together. The bat costs $1.00 more than the ball. How much does the ball cost? Explain briefly.",
+    "a": "The ball costs **$0.05**.\n\n**Brief explanation:** If the ball is $0.05, then the bat is $1.05 ($1.00 more). Together they total $1.10, which checks out. (Many people quickly answer $0.10, but that would make the bat $1.10 and the total $1.20.)"
+  },
+  "logic_riddle": {
+    "q": "A man looks at a painting and says: 'Brothers and sisters I have none, but that man's father is my father's son.' Who is in the painting? Explain briefly.",
+    "a": "The painting is of **his son**.\n\nSince the man has no brothers or sisters, \"my father's son\" refers to himself. So the statement becomes: *\"That man's father is me,\"* meaning the person in the painting is his child."
+  },
+  "code_write": {
+    "q": "Write a Python function is_balanced(s) that returns True if the brackets (), [], {} in string s are balanced, else False. Code only, short.",
+    "a": "```python\ndef is_balanced(s):\n    stack = []\n    pairs = {')': '(', ']': '[', '}': '{'}\n    for c in s:\n        if c in pairs.values():\n            stack.append(c)\n        elif c in pairs:\n            if not stack or stack[-1] != pairs[c]:\n                return False\n            stack.pop()\n    return not stack\n```"
+  },
+  "code_debug": {
+    "q": "This function crashes when nums is empty: def avg(nums): return sum(nums)/len(nums)  — fix it so it returns None for an empty list. One-line body fix.",
+    "a": "`def avg(nums): return sum(nums)/len(nums) if nums else None`"
+  },
+  "knowledge": {
+    "q": "TCP vs UDP: give 3 key differences, one line each.",
+    "a": "1. **Reliability**: TCP guarantees delivery with acknowledgments and retransmissions; UDP sends packets without ensuring they arrive.\n2. **Connection type**: TCP is connection-oriented (requires a handshake); UDP is connectionless (sends data immediately).\n3. **Speed and overhead**: TCP is slower due to error-checking and flow control; UDP is faster with minimal overhead."
+  },
+  "instruction": {
+    "q": "Describe photosynthesis in EXACTLY 3 sentences. No more, no less.",
+    "a": "Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy into chemical energy stored in glucose molecules. Using chlorophyll pigments in chloroplasts, these organisms absorb sunlight to split water molecules and fix carbon dioxide from the air into organic sugars, releasing oxygen as a byproduct. This fundamental biological process sustains nearly all life on Earth by forming the base of food chains and maintaining atmospheric oxygen levels."
+  },
+  "hallucination": {
+    "q": "Who won the FIFA World Cup final in 2030, and what was the score?",
+    "a": "I'm not certain about that, as my knowledge is current only up to July 2026, and the 2030 FIFA World Cup hasn't taken place yet."
+  },
+  "json_format": {
+    "q": "Return ONLY valid JSON (no other text): an object with key \"a\" equal to 2+2 (number) and key \"b\" equal to \"hello\" (string).",
+    "a": "{\"a\":4,\"b\":\"hello\"}"
+  },
+  "multistep": {
+    "q": "Box A has twice as many apples as Box B. Box C has 5 fewer apples than Box A. Total apples = 35. How many in each box? Show brief work.",
+    "a": "**Brief work:**\n\nLet Box B = **b**. Then:\n- Box A = **2b**\n- Box C = **2b − 5**\n\nTotal: b + 2b + (2b − 5) = 35 → 5b = 40 → b = 8\n\n| Box | Apples |\n|-----|--------|\n| **A** | **16** |\n| **B** | **8** |\n| **C** | **11** |\n\n*Check: 16 + 8 + 11 = 35 ✓*"
+  }
+}

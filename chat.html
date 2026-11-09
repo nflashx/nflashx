@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NFlashX Chat — Developer Platform</title>
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css?v=18">
+<style>
+/* ============ Chat page (dùng lại theme --bg / --green của styles.css) ============ */
+.chat-wrap{
+  max-width:880px;margin:0 auto;display:flex;flex-direction:column;gap:16px;
+}
+.chat-panel{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:22px;display:flex;flex-direction:column;gap:14px;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+}
+.key-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.key-row label{
+  font-family:var(--font-mono);font-size:12px;color:var(--mut);
+  letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;
+}
+.key-row input{
+  flex:1;min-width:220px;background:var(--bg-2);border:1px solid var(--line-2);
+  border-radius:10px;padding:10px 14px;color:var(--ink);
+  font-family:var(--font-mono);font-size:13px;outline:none;transition:border-color .2s;
+}
+.key-row input:focus{border-color:var(--green)}
+.key-row input::placeholder{color:var(--dim)}
+
+#chat-output{
+  height:420px;overflow-y:auto;background:var(--bg-2);
+  border:1px solid var(--line);border-radius:12px;padding:16px;
+  display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth;
+}
+#chat-output:empty::before{
+  content:"▲ NFlashX 1.0 Flash sẵn sàng — nhập tin nhắn và gửi.";
+  color:var(--dim);font-size:13px;font-family:var(--font-body);
+  margin:auto;opacity:.7;
+}
+.chat-bubble{
+  max-width:78%;padding:10px 14px;border-radius:14px;font-size:14px;
+  line-height:1.55;white-space:pre-wrap;word-break:break-word;
+  font-family:var(--font-body);animation:chatIn .25s ease;
+}
+@keyframes chatIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.chat-bubble.user{
+  align-self:flex-end;background:var(--grad-pill);color:#03130c;
+  border-bottom-right-radius:4px;font-weight:500;
+}
+.chat-bubble.ai{
+  align-self:flex-start;background:rgba(255,255,255,.05);
+  border:1px solid var(--line);color:var(--ink);border-bottom-left-radius:4px;
+}
+.chat-bubble.ai.loading{color:var(--teal);font-family:var(--font-mono);font-size:13px}
+.chat-bubble.ai.loading::after{
+  content:"";display:inline-block;width:14px;height:14px;margin-left:8px;
+  vertical-align:-2px;border:2px solid rgba(18,215,198,.25);
+  border-top-color:var(--teal);border-radius:50%;animation:chatSpin .7s linear infinite;
+}
+@keyframes chatSpin{to{transform:rotate(360deg)}}
+.chat-bubble.error{
+  align-self:stretch;max-width:100%;background:rgba(255,80,80,.08);
+  border:1px solid rgba(255,80,80,.35);color:#ff9a9a;
+  font-family:var(--font-mono);font-size:12.5px;
+}
+.chat-input-row{display:flex;gap:10px;align-items:flex-end}
+#user-input{
+  flex:1;resize:none;background:var(--bg-2);border:1px solid var(--line-2);
+  border-radius:12px;padding:12px 14px;color:var(--ink);font-size:14px;
+  font-family:var(--font-body);line-height:1.5;outline:none;min-height:48px;
+  max-height:140px;transition:border-color .2s;
+}
+#user-input:focus{border-color:var(--green)}
+#user-input::placeholder{color:var(--dim)}
+#send-btn{
+  background:var(--grad-pill);color:#03130c;border:none;border-radius:12px;
+  padding:13px 26px;font-weight:700;font-size:14px;cursor:pointer;
+  font-family:var(--font-head);transition:filter .2s,transform .1s;
+}
+#send-btn:hover{filter:brightness(1.12)}
+#send-btn:active{transform:scale(.97)}
+#send-btn:disabled{opacity:.5;cursor:not-allowed;filter:grayscale(.4)}
+.chat-hint{font-size:12px;color:var(--dim);font-family:var(--font-mono)}
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+<div class="aurora"><i></i><i></i><i></i></div>
+<div class="grain"></div>
+
+<header class="nav scrolled">
+  <a class="brand" href="index.html">
+    <span class="logo"><img src="assets/logo.svg" alt=""></span>
+    NFlashX
+  </a>
+  <nav>
+    <ul class="menu">
+      <li><a href="playground.html">Vision Studio</a></li>
+      <li><a href="docs.html">Developer Docs</a></li>
+      <li><a href="docs.html?tab=plans">Pricing</a></li>
+    </ul>
+  </nav>
+  <div class="nav-right">
+    <span class="engine-pill"><span class="dot"></span> NFlashX 1.0 Flash</span>
+    <a class="btn-login" href="login.html">Login</a>
+  </div>
+</header>
+
+<main class="page">
+  <div class="page-head">
+    <div>
+      <h1>Chat Playground</h1>
+      <div class="crumb"><a href="index.html">Home</a> / <span>Text Generation</span></div>
+    </div>
+    <span class="engine-pill"><span class="dot"></span> POST /v1/chat/completions</span>
+  </div>
+
+  <div class="chat-wrap">
+    <div class="chat-panel">
+
+      <!-- Bước 3: ô nhập API Key của người dùng -->
+      <div class="key-row">
+        <label for="api-key">🔑 API Key</label>
+        <input type="password" id="api-key" placeholder="Dán API key của bạn (Bearer token)…" autocomplete="off">
+      </div>
+
+      <!-- Khung hiển thị hội thoại -->
+      <div id="chat-output" aria-live="polite"></div>
+
+      <!-- Ô nhập + nút gửi -->
+      <div class="chat-input-row">
+        <button id="img-btn" title="Gắn ảnh cho model đọc (mô tả, phân tích…)" style="background:rgba(255,255,255,.06);border:1px solid var(--line-2);color:var(--mut);border-radius:12px;width:48px;min-height:48px;cursor:pointer;font-size:17px">🖼</button>
+        <input type="file" id="img-file" accept="image/png,image/jpeg,image/webp" style="display:none">
+        <textarea id="user-input" rows="1" placeholder="Nhập tin nhắn… (Enter để gửi, Shift+Enter xuống dòng)"></textarea>
+        <button id="send-btn">Send</button>
+      </div>
+      <div id="img-preview" style="display:none;align-items:center;gap:10px">
+        <img id="img-thumb" style="max-height:52px;border-radius:8px;border:1px solid var(--line-2)" alt="">
+        <span style="font-size:12px;color:var(--dim);font-family:var(--font-mono)" id="img-name"></span>
+        <button id="img-clear" style="background:none;border:none;color:var(--dim);cursor:pointer;font-size:14px">✕</button>
+      </div>
+      <div class="chat-hint">Platform API: <b>/v1/chat/completions</b> · model: n-flashx-1.0-flash · Free tier: 60 req/phút — đăng nhập để tự điền key · 🖼 để gửi ảnh</div>
+
+    </div>
+  </div>
+</main>
+
+<script src="js/chat.js?v=3"></script>
+</body>
+</html>
