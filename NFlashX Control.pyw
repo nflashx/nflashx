@@ -27,10 +27,24 @@ def find_server_pid():
         pass
     return None
 
+def load_secrets_env():
+    """Doc secrets.env (dang batch: set KEY=value) — truyen vao server process."""
+    env = dict(os.environ)
+    p = os.path.join(ROOT, "secrets.env")
+    if os.path.exists(p):
+        with open(p, encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line.lower().startswith("set ") and "=" in line:
+                    k, _, v = line[4:].partition("=")
+                    env[k.strip()] = v.strip()
+    return env
+
 def start_server():
     log = open(os.path.join(ROOT, "data", "server_app.log"), "ab")
     subprocess.Popen([sys.executable, "-I", "server.py"], cwd=ROOT,
-                     stdout=log, stderr=log, creationflags=CREATE_NO_WINDOW)
+                     stdout=log, stderr=log, env=load_secrets_env(),
+                     creationflags=CREATE_NO_WINDOW)
 
 def stop_server():
     pid = find_server_pid()
