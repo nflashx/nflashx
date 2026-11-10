@@ -65,10 +65,10 @@
     <div class="grp" data-g="subscribe">
       <div class="grp-head">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M12 2l2.4 5.4L20 8.3l-4.3 4 1.2 5.9L12 15.3 7.1 18.2l1.2-5.9L4 8.3l5.6-.9L12 2z"/></svg>
-        Subscribe <span class="car">▾</span>
+        Upgrade <span class="car">▾</span>
       </div>
       <ul class="grp-list">
-        <li><a href="#agent-plan">Agent Plan</a></li>
+        <li><a href="#agent-plan">Pro tier</a></li>
       </ul>
     </div>
     <div class="grp" data-g="notifications">
@@ -353,22 +353,22 @@ const PAGES = {
       <div class="empty">Token Plan details are coming soon.</div>`;
     }
   },  'agent-plan': {
-    title: 'Agent Plan',
+    title: 'Pro tier',
     render(u) {
       const isPro = String(u.plan).toLowerCase() === 'pro';
       return `
-      <h1>Agent Plan</h1>
-      <p class="desc">Shared quota across text, image, and video — for teams and heavy agent workflows.</p>
+      <h1>Pro tier</h1>
+      <p class="desc">One-time $10 top-up — unlocks the Pro model, a larger context window, and the lower Pro rate limit. This is not a recurring subscription.</p>
       <div class="bal-box" style="margin:14px 0">
-        <div class="b"><b>Agent Plan — Pro tier</b><span style="font-family:'Space Grotesk';font-weight:700">$10</span></div>
+        <div class="b"><b>Pro tier — one-time top-up</b><span style="font-family:'Space Grotesk';font-weight:700">$10</span></div>
         <div class="b"><b>Your current tier</b><span>${esc(u.plan)} ${isPro ? '<span style="color:#25e39a">✓ active</span>' : ''}</span></div>
       </div>
       ${isPro
         ? '<div class="empty" style="color:#25e39a">You are already on the Pro tier — full API access unlocked.</div>'
         : `<div class="btn-row">
-             <button class="btn-dark sm" id="subNow">Subscribe Now — $10</button>
+             <button class="btn-dark sm" id="subNow">Upgrade to Pro — $10</button>
            </div>
-           <p class="desc" style="margin-top:10px">Subscribing sends a request to the admin. Once approved, your account tier becomes Pro: the nflashx-1.0-pro model unlocks and new keys are issued with the sk-nfx-pro- prefix.</p>`}`;
+           <p class="desc" style="margin-top:10px">This sends a $10 top-up request. Once approved, $10 is added to your balance and your account tier becomes Pro: the nflashx-1.0-pro model unlocks and new keys are issued with the sk-nfx-pro- prefix.</p>`}`;
     },
     after() {
       const b = document.getElementById('subNow');
@@ -385,7 +385,7 @@ const PAGES = {
             showPayPanel(r.payment, 'pro');
           }
         } catch (e) { alert(e.message); }
-        b.disabled = false; b.textContent = 'Subscribe Now — $10';
+        b.disabled = false; b.textContent = 'Upgrade to Pro — $10';
       };
     }
   },  notifications: {
@@ -394,7 +394,19 @@ const PAGES = {
       return `
       <h1>User Notifications</h1>
       <p class="desc">Product updates and account alerts will appear here.</p>
-      <div class="empty">You're all caught up.</div>`;
+      <div id="notifList"><div class="empty">Loading…</div></div>`;
+    },
+    after() {
+      fetch('/api/auth/announcements', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
+        .then(r => r.json()).then(d => {
+          const list = d.announcements || [];
+          const box = document.getElementById('notifList');
+          if (!box) return;
+          box.innerHTML = list.length ? list.map(a =>
+            '<div class="kv" style="align-items:flex-start"><span class="k">' + new Date(a.ts*1000).toLocaleString() + '</span>' +
+            '<span class="v"><b>' + esc(a.title) + '</b><br><span style="color:#96a3b2;font-size:13px">' + esc(a.body) + '</span></span></div>'
+          ).join('') : '<div class="empty">You are all caught up.</div>';
+        }).catch(() => {});
     }
   },
 };
@@ -594,14 +606,14 @@ async function loadBalance() {
   <div class="lc-body" id="lcBody">
     <div class="lc-row">
       <span class="lc-ava"><img src="assets/logo.svg" alt=""></span>
-      <div class="lc-bubble">Hi, I'm NFlashX AI support. I can help with product usage, accounts, subscriptions, Credits, and more. How can I help you?</div>
+      <div class="lc-bubble">Hi, I'm NFlashX AI support. I can help with product usage, accounts, billing, top-ups, and more. How can I help you?</div>
     </div>
     <div class="lc-quick" id="lcQuick">
       <a href="#" data-q="How to get an API Key">How to get an API Key</a>
       <a href="#" data-q="How to connect a model">How to connect a model</a>
       <a href="#" data-q="Model pricing">Model pricing</a>
-      <a href="#" data-q="What is Tokenplan? What plans are available?">What is Tokenplan? What plans are available?</a>
-      <a href="#" data-q="How to subscribe to Tokenplan">How to subscribe to Tokenplan</a>
+      <a href="#" data-q="What plans are available?">What plans are available?</a>
+      <a href="#" data-q="How do I top up or upgrade to Pro?">How do I top up or upgrade to Pro?</a>
       <a href="#" data-q="How to troubleshoot API errors">How to troubleshoot API errors</a>
     </div>
     <div class="lc-hint">Click a quick question to send</div>
@@ -825,8 +837,8 @@ function closePayPanel() {
     'How to get an API Key': 'Sign in, open Settings → API Keys and click "Create new secret key". Your key starts with sk-nfx-… and has full access on the Free plan.',
     'How to connect a model': 'Use the OpenAI-compatible base URL ' + location.origin + '/v1 with your key, then set "model" to nflashx-1.0-flash.',
     'Model pricing': 'Text (Flash): $0.10/M input, $0.15/M output — free in trial. Images: from $0.010/image. Video: $0.025/second at 720P.',
-    'What is Tokenplan? What plans are available?': 'Token Plan gives starter quotas per model (requests, images, video seconds). Agent Plan adds shared Credits across all modalities — Lite, Plus, Pro and Max tiers.',
-    'How to subscribe to Tokenplan': 'Open Subscribe → Token Plan in the sidebar and pick a tier. On Agent Plan, credits refresh every 5 hours.',
+    'What plans are available?': 'NFlashX is prepaid USD — no monthly plans. Top up with PayPal, VietQR, or USDT; new accounts get $1.00 credit, and a one-time $10 top-up unlocks the Pro tier.',
+    'How do I top up or upgrade to Pro?': 'Open Balance → Billing to top up, or Upgrade → Pro tier. Pro is a one-time $10 top-up, not a subscription.',
     'How to troubleshoot API errors': 'First check your API key and the Base URL (must end with /v1). Then read the error code: 401 wrong key, 429 rate limit, 400 invalid parameters.'
   };
   const GENERIC = 'Thanks for your question! Our team will follow up by email. Meanwhile, tap one of the quick questions above for instant answers.';

@@ -1,7 +1,7 @@
 """Generate landing-page artwork with the Agnes image API (run once at build time)."""
 import json, os, time, urllib.request
 
-KEY = os.environ.get("AGNES_API_KEY", "sk-44kFggy5oV4nksiZkLnzFuNB5loRZlywK6FqjCfDKnSia81g")
+KEY = os.environ.get("AGNES_KEY", "")
 BASE = "https://apihub.agnes-ai.com/v1/images/generations"
 OUT = os.path.join(os.path.dirname(__file__), "..", "assets")
 

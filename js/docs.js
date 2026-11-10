@@ -97,25 +97,28 @@ const PAGES = {
       <div class="callout" style="border-color:rgba(255,180,60,.4);background:rgba(255,150,40,.07)"><span class="ic">⚠️</span><div>For OpenAI-compatible API services, the API Base URL usually ends with <span class="code-inline">/v1</span>.<br><br>Correct example:<div class="codeblock" style="margin-top:10px"><button class="copy-btn" data-copy="${API_BASE}/v1">⧉</button><pre>${API_BASE}/v1</pre></div></div></div>`
   },
   plans: {
-    title: 'Subscription plans',
-    lede: 'Explore Agent Plan Credits, model discounts, and usage limits, alongside retained Token Plan benefits.',
-    toc: ['Existing plan quotas', 'Agent Plan pricing', 'Model discounts', 'How Credits work'],
+    title: 'Billing & Top-up',
+    lede: 'Prepaid USD balance — no subscriptions. Top up with PayPal, VietQR (VND), or USDT.',
+    toc: ['Prepaid balance', 'Top-up methods', 'Signup credit', 'Pro tier', 'How billing works'],
     body: `
-      <h2>Agent Plan</h2>
-      <p>For individual developers, agent workflows and everyday work — shared quota across all modalities, low unit price, ideal for long-term high-frequency use.</p>
+      <h2>Prepaid balance</h2>
+      <p>NFlashX is pay-as-you-go. Every account holds a USD balance; each successful API call is charged at the model's list price. There are no monthly plans — your balance is always shown in USD.</p>
+      <h2>Top-up methods</h2>
       <div class="dcards">
-        <div class="dcard"><b>Lite</b><p>$2.99/mo · 20,000 Credits · 2,000 Credits every 5 hours · shared quota across text, image, and video.</p></div>
-        <div class="dcard"><b>Plus</b><p>$14.99/mo · 100,000 Credits · 10,000 Credits every 5 hours.</p></div>
-        <div class="dcard"><b>Pro</b><p>$29.99/mo · 240,000 Credits · 24,000 Credits every 5 hours.</p></div>
-        <div class="dcard"><b>Max</b><p>$75.00/mo · 600,000 Credits · 60,000 Credits every 5 hours.</p></div>
+        <div class="dcard"><b>PayPal</b><p>USD top-up from <b>$5</b> to <b>$10,000</b>. The balance is credited when PayPal captures the order.</p></div>
+        <div class="dcard"><b>VietQR / bank transfer</b><p>Transfer VND to the bank account shown at checkout. The amount is converted at the live USD/VND rate. Include the <span class="code-inline">NFX-xxxx</span> memo so the bank webhook can credit your balance automatically.</p></div>
+        <div class="dcard"><b>USDT (TRC20)</b><p>Available when the admin has configured a USDT wallet. Send the exact amount with the memo; the top-up is credited after confirmation.</p></div>
       </div>
-      <h2>Existing plan quotas</h2>
-      <p>Plan <span class="code-inline red">nflashx-1.0-flash</span> — Starter: 1,500 requests per 5 hours; 15,000 requests per week.<br>Plan <span class="code-inline red">nflashx-vision-1.0-flash</span> — Starter: 4,000 images per day.<br>Plan <span class="code-inline red">nflashx-motion-1.0</span> — Starter: 500 seconds per day.</p>
-      <h2>How Credits work</h2>
-      <div class="codeblock"><pre><span class="c-cm">Credits charged = Credits equivalent of the model's list price</span>
-                <span class="c-cm">× current plan factor</span>
-              + Credits equivalent of non-discounted excess input-image fees</pre></div>
-      <p>Conversion basis: 6,800 Credits = USD 1.</p>`
+      <h2>Signup credit</h2>
+      <p>New verified accounts receive <b>$1.00</b> in balance. The bonus is capped at <b>$2.00 per IP per day</b> to prevent abuse.</p>
+      <h2>Pro tier</h2>
+      <p>Pro is a one-time <b>$10</b> top-up — not a recurring subscription. It upgrades your account tier to Pro and unlocks <span class="code-inline red">nflashx-1.0-pro</span>, a larger context window (8,192 tokens), and the lower Pro rate limit. Use the platform's <b>Pro tier</b> page; once the payment is approved the tier is applied automatically.</p>
+      <h2>How billing works</h2>
+      <div class="codeblock"><pre>Charge = model list price × real usage
+Text:  per 1M input / output tokens
+Image: per generated image
+Video: per generated second</pre></div>
+      <p>Only successful requests are charged. Flash text requests are free for the first <b>10,000 requests per month</b> (trial). See <a href="#pricing">Model Pricing</a> for current rates.</p>`
   },
   pricing: {
     title: 'Model Pricing',
@@ -124,26 +127,25 @@ const PAGES = {
     body: `
       <h2>Text models</h2>
       <div class="dcards">
-        <div class="dcard"><b><span class="code-inline red">nflashx-1.0-flash</span></b><p>Cached input <b>$0.005</b>/M · Input <b>$0.10</b>/M · Output <b>$0.15</b>/M — Trial: $0 / $0 / $0.</p></div>
-        <div class="dcard"><b><span class="code-inline red">nflashx-1.0-pro</span></b><p>Cached input <b>$0.04</b>/M · Input <b>$0.40</b>/M · Output <b>$0.70</b>/M — requires Pro-tier key.</p></div>
+        <div class="dcard"><b><span class="code-inline red">nflashx-1.0-flash</span></b><p>Input <b>$0.10</b>/M · Output <b>$0.15</b>/M — first 10,000 requests/month free (trial).</p></div>
+        <div class="dcard"><b><span class="code-inline red">nflashx-1.0-pro</span></b><p>Input <b>$0.40</b>/M · Output <b>$0.70</b>/M — requires the Pro tier.</p></div>
       </div>
       <h2>Image models</h2>
-      <p><span class="code-inline red">nflashx-vision-1.0-flash</span> uses list-price billing by resolution tier. Current trial: all output-resolution tiers and input reference images are free.</p>
-      <div class="codeblock"><pre>List-price cost = output image count × output resolution unit price
-              + max(0, input image count - 3) × $0.003</pre></div>
-      <p>1K output image <b>$0.010</b>/image · 2K <b>$0.018</b>/image · 3K <b>$0.021</b>/image · 4K <b>$0.024</b>/image.</p>
+      <p><span class="code-inline red">nflashx-vision-1.0-flash</span> — flat <b>$0.010</b> per generated image. Current trial: free.</p>
       <h2>Video models</h2>
-      <p><span class="code-inline red">nflashx-motion-1.0</span> — per-second billing by resolution tier; synchronized audio included.</p>`
+      <p><span class="code-inline red">nflashx-motion-1.0</span> — <b>$0.025</b> per generated second; synchronized audio included. <b>Coming soon</b> — not yet publicly available.</p>
+      <h2>Billing notes</h2>
+      <p>All prices are in USD and charged against your prepaid balance. Only successful requests are billed. Flash text requests are free for the first 10,000 requests/month.</p>`
   },
   faqs: {
     title: 'FAQs',
-    lede: 'API Access, Pricing, and Subscriptions — everything you asked.',
-    toc: ['API Access, Pricing, and Subscriptions', 'Other Frequently Asked Questions'],
+    lede: 'API access, billing, and top-ups — everything you asked.',
+    toc: ['API access and billing', 'Other frequently asked questions'],
     body: `
       <div class="dcards" style="grid-template-columns:1fr">
         <div class="dcard"><b>1. What is this platform?</b><p>NFlashX is a full-stack multimodal AI platform — text, image, and video models behind one OpenAI-compatible API.</p></div>
-        <div class="dcard"><b>2. Is the API free to use?</b><p>Yes — the Free API tier gives you daily quota on Flash models. Paid plans remove limits.</p></div>
-        <div class="dcard"><b>3. What are the limitations for free users?</b><p>Lower RPM, smaller context, and watermark-free image quota caps.</p></div>
+        <div class="dcard"><b>2. Is the API free to use?</b><p>New accounts get <b>$1.00</b> in balance, and Flash text requests are free for the first 10,000 requests/month. After that you top up a USD balance and pay only for what you use.</p></div>
+        <div class="dcard"><b>3. What are the limitations for free users?</b><p>Free accounts use the standard rate limit; the Pro model and the larger context window require the one-time $10 Pro upgrade.</p></div>
         <div class="dcard"><b>4. How do I get started?</b><p>Create a key, call the endpoint, and try <a href="playground.html" style="color:#8df0c4">Vision Studio</a> for images.</p></div>
         <div class="dcard"><b>5. How can I check my usage?</b><p>Usage dashboard shows tokens, image pics, video seconds and requests with a 7-day trend chart.</p></div>
       </div>
@@ -601,7 +603,8 @@ document.getElementById('tabs').addEventListener('click', e => {
 });
 
 function route() {
-  const h = location.hash.replace('#', '') || 'overview';
+  const q = new URLSearchParams(location.search).get('tab');
+  const h = location.hash.replace('#', '') || q || 'overview';
   const tabMap = { integration: 'integration', plans: 'plans', pricing: 'pricing', faqs: 'faqs', legal: 'legal' };
   const tab = tabMap[h] || (h.startsWith('m=') || h === 'quickstart' || h === 'overview' ? 'guides' : 'guides');
   document.querySelectorAll('#tabs a').forEach(x => x.classList.toggle('on', x.dataset.tab === tab));

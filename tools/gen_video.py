@@ -10,7 +10,7 @@ import json, os, sys, time, urllib.request, urllib.error
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # Windows cp1252 console fix
 
-KEY = os.environ.get("AGNES_API_KEY", "sk-44kFggy5oV4nksiZkLnzFuNB5loRZlywK6FqjCfDKnSia81g")
+KEY = os.environ.get("AGNES_KEY", "")
 BASE = "https://apihub.agnes-ai.com"
 OUT = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "assets", "motion-bg.mp4"))
 PROMPT = ("Cinematic night city street, a motorcycle rider in black leather speeding past glowing neon "

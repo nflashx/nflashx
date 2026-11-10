@@ -37,7 +37,7 @@ from email.mime.text import MIMEText
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
 PORT = int(os.environ.get("PORT", 8600))
-API_KEY = os.environ.get("AGNES_API_KEY", "sk-44kFggy5oV4nksiZkLnzFuNB5loRZlywK6FqjCfDKnSia81g")
+API_KEY = os.environ.get("AGNES_KEY", "")
 UPSTREAM = "https://apihub.agnes-ai.com"
 ADMIN_KEY = os.environ.get("NFLASHX_ADMIN_KEY", "nfx-admin-RjCoETSaeGjDKODmWkiJuRm1JvVfmauG")
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -388,10 +388,50 @@ PAYMENT_CFG_PATH = os.path.join(DATA, "payment_config.json")
 def load_payment_cfg():
     return load_json_cfg("payment_config.json") or {}
 
+# ------------------------------------------------- admin settings (kiểm soát từ UI)
+ADMIN_SETTINGS_PATH = os.path.join(DATA, "admin_settings.json")
+SETTINGS = {
+    "usd_vnd": 0, "instant_topup": True,
+    "signup_credit": 1.0, "ip_credit_daily": 2.0,
+    "rate_limit_free": 1.0, "rate_limit_pro": 0.1,
+    "flash_cap": 4096, "pro_cap": 8192,
+    "flash_in": 0.10, "flash_out": 0.15,
+    "pro_in": 0.40, "pro_out": 0.70,
+    "vision_price": 0.01, "motion_price": 0.025,
+    "persona_flash": "", "persona_pro": "",
+    "pro_gate": True, "maintenance": False, "signup_open": True,
+}
+
+def load_settings():
+    s = load_json_cfg("admin_settings.json") or {}
+    for k in SETTINGS:
+        if k in s:
+            SETTINGS[k] = s[k]
+    apply_settings()
+
+def apply_settings():
+    TIER_POLICY["free"]["max_output_tokens"] = SETTINGS["flash_cap"]
+    TIER_POLICY["pro"]["max_output_tokens"] = SETTINGS["pro_cap"]
+    TIER_POLICY["free"]["persona"] = SETTINGS["persona_flash"] or None
+    TIER_POLICY["pro"]["persona"] = SETTINGS["persona_pro"] or None
+    RATE_LIMITS["free"] = SETTINGS["rate_limit_free"]
+    RATE_LIMITS["pro"] = SETTINGS["rate_limit_pro"]
+    MODEL_PRICING["nflashx-1.0-flash"].update({"in": SETTINGS["flash_in"], "out": SETTINGS["flash_out"]})
+    MODEL_PRICING["nflashx-1.0-pro"].update({"in": SETTINGS["pro_in"], "out": SETTINGS["pro_out"]})
+    MODEL_PRICING["nflashx-vision-1.0-flash"]["image"] = SETTINGS["vision_price"]
+    MODEL_PRICING["nflashx-motion-1.0"]["second"] = SETTINGS["motion_price"]
+
+def save_settings():
+    os.makedirs(DATA, exist_ok=True)
+    with open(ADMIN_SETTINGS_PATH, "w", encoding="utf-8") as f:
+        json.dump(SETTINGS, f, indent=2)
+
 USD_VND = 25600
 _RATE_CACHE = {"vnd": None, "ts": 0}
 
 def usd_to_vnd_rate():
+    if SETTINGS.get("usd_vnd"):
+        return float(SETTINGS["usd_vnd"])
     if _RATE_CACHE["vnd"] and now() - _RATE_CACHE["ts"] < 6 * 3600:
         return _RATE_CACHE["vnd"]
     cfg = load_payment_cfg()
@@ -700,7 +740,7 @@ def do_recharge_request(body):
     rec = {"id": secrets.token_hex(4), "email": u["email"], "amount": round(amt, 2),
            "plan": "pro" if (body.get("plan") or "").lower() == "pro" else None,
            "ts": now(), "status": "pending"}
-    if INSTANT_TOPUP or u.get("admin"):
+    if SETTINGS["instant_topup"] or u.get("admin"):
         rec["status"] = "approved"
         u["balance"] = round(u.get("balance", 0) + rec["amount"], 2)
         if rec["plan"] == "pro":
@@ -758,6 +798,125 @@ def do_usage(body):
     return out
 
 # ------------------------------------------------- admin console (hang that)
+def do_admin_settings(body, handler):
+    require_admin(body)
+    keys_num = ("usd_vnd", "signup_credit", "ip_credit_daily", "rate_limit_free", "rate_limit_pro",
+                "flash_in", "flash_out", "pro_in", "pro_out", "vision_price", "motion_price")
+    keys_int = ("flash_cap", "pro_cap")
+    keys_bool = ("instant_topup", "pro_gate", "maintenance", "signup_open")
+    keys_str = ("persona_flash", "persona_pro")
+    if any(k in body for k in list(keys_num) + list(keys_int) + list(keys_bool) + list(keys_str)):
+        for k in list(keys_num) + list(keys_int):
+            if k in body:
+                try:
+                    SETTINGS[k] = int(body[k]) if k in keys_int else float(body[k])
+                except (TypeError, ValueError):
+                    raise AuthError(400, "Invalid value for " + k)
+        for k in keys_bool:
+            if k in body:
+                SETTINGS[k] = bool(body[k])
+        for k in keys_str:
+            if k in body:
+                SETTINGS[k] = str(body[k] or "")
+        save_settings(); apply_settings()
+    return {"ok": True, "settings": SETTINGS}
+
+def do_admin_announce(body, handler):
+    require_admin(body)
+    if body.get("title") or body.get("body"):
+        rec = {"id": secrets.token_hex(4), "title": (body.get("title") or "").strip()[:120],
+               "body": (body.get("body") or "").strip()[:2000], "ts": now()}
+        DB.setdefault("announcements", []).insert(0, rec)
+        del DB["announcements"][30:]
+        save_db(DB)
+        return {"ok": True, "announcement": rec}
+    if body.get("delete_id"):
+        DB["announcements"] = [a for a in DB.get("announcements", []) if a["id"] != body["delete_id"]]
+        save_db(DB)
+        return {"ok": True}
+    return {"ok": True, "announcements": DB.get("announcements", [])}
+
+def do_admin_ipbans(body, handler):
+    require_admin(body)
+    if body.get("action") == "unban" and body.get("ip"):
+        DB["banned_ips"] = [b for b in DB.get("banned_ips", []) if b["ip"] != body["ip"]]
+        save_db(DB)
+        return {"ok": True, "banned_ips": DB.get("banned_ips", [])}
+    if body.get("action") == "ban" and body.get("ip"):
+        ip = str(body["ip"]).strip()
+        try:
+            ipaddress.ip_address(ip)
+        except ValueError:
+            raise AuthError(400, "Invalid IP address.")
+        DB.setdefault("banned_ips", []).append({"ip": ip, "until": 0,
+                                                "reason": body.get("reason") or "banned by admin"})
+        save_db(DB)
+        return {"ok": True, "banned_ips": DB.get("banned_ips", [])}
+    return {"ok": True, "banned_ips": DB.get("banned_ips", [])}
+
+def do_admin_user_detail(body, handler):
+    require_admin(body)
+    email = (body.get("email") or "").lower()
+    u = DB["users"].get(email)
+    if not u:
+        raise AuthError(404, "No such user.")
+    row = None
+    if SQLITE is not None:
+        with SQLITE_LOCK:
+            row = SQLITE.execute(
+                "SELECT tier,total_requests,last_ip,COALESCE(banned,0) FROM users WHERE email=?",
+                (email,)).fetchone()
+    return {"ok": True, "email": email, "user": public_user(u),
+            "keys": u.get("keys", []), "charged_history": u.get("charged_history", [])[-100:],
+            "charged_total": round(u.get("charged_total", 0), 6),
+            "balance": round(u.get("balance", 0), 2),
+            "tier": row[0] if row else None, "total_requests": row[1] if row else 0,
+            "last_ip": row[2] if row else None,
+            "sessions": sum(1 for s2 in DB["sessions"].values() if s2["email"] == email),
+            "topups": [t for t in DB.get("topups", []) if t["email"] == email][-20:]}
+
+def do_admin_server_restart(body, handler):
+    require_admin(body)
+    import subprocess, sys
+    subprocess.Popen([sys.executable, "-I", "server.py"], cwd=ROOT,
+                     creationflags=0x00000008 | 0x00000200)
+    threading.Timer(1.5, lambda: os._exit(0)).start()
+    return {"ok": True, "restarting": True}
+
+def do_admin_clear(body, handler):
+    """Dọn dữ liệu test: topups / usage_log / announcements."""
+    require_admin(body)
+    target = body.get("target")
+    if target == "topups":
+        DB["topups"] = []
+        save_db(DB)
+        return {"ok": True, "cleared": "topups"}
+    if target == "usage":
+        if SQLITE is not None:
+            with SQLITE_LOCK:
+                SQLITE.execute("DELETE FROM usage_log")
+                SQLITE.commit()
+        return {"ok": True, "cleared": "usage"}
+    if target == "announcements":
+        DB["announcements"] = []
+        save_db(DB)
+        return {"ok": True, "cleared": "announcements"}
+    if target == "test_accounts":
+        keep = {e for e, u in DB["users"].items() if u.get("admin")}
+        for e in list(DB["users"]):
+            if e not in keep:
+                DB["users"].pop(e)
+        DB["sessions"] = {t: s2 for t, s2 in DB["sessions"].items() if s2["email"] in keep}
+        if SQLITE is not None:
+            with SQLITE_LOCK:
+                for (e,) in SQLITE.execute("SELECT email FROM users").fetchall():
+                    if e not in keep:
+                        SQLITE.execute("DELETE FROM users WHERE email=?", (e,))
+                SQLITE.commit()
+        save_db(DB)
+        return {"ok": True, "cleared": "test_accounts", "kept": list(keep)}
+    raise AuthError(400, "Unknown clear target.")
+
 def do_admin_users(body, handler):
     require_admin(body)
     today0 = time.mktime(time.strptime(time.strftime("%Y-%m-%d"), "%Y-%m-%d"))
@@ -1179,19 +1338,26 @@ def grant_signup_credit(u, ip):
     """Tặng $1 credit khi tạo account — trần $2/IP/ngày chống farm."""
     if u.get("admin") or not ip:
         return
+    credit = float(SETTINGS.get("signup_credit", 1.0))
+    daily = float(SETTINGS.get("ip_credit_daily", 2.0))
+    if credit <= 0:
+        u["trial_note"] = "Trial credit is disabled by the admin."
+        return
     day = time.strftime("%Y-%m-%d")
     cap = DB.setdefault("ip_credit", {}).get(ip)
     if not cap or cap.get("day") != day:
         cap = {"day": day, "total": 0.0}
-    if cap["total"] + SIGNUP_CREDIT > IP_CREDIT_DAILY:
+    if cap["total"] + credit > daily:
         u["trial_note"] = "Free trial credit for this network is used up for today."
         return
-    cap["total"] = round(cap["total"] + SIGNUP_CREDIT, 2)
+    cap["total"] = round(cap["total"] + credit, 2)
     DB.setdefault("ip_credit", {})[ip] = cap
-    u["balance"] = round(u.get("balance", 0) + SIGNUP_CREDIT, 2)
-    u["welcome_credit"] = SIGNUP_CREDIT
+    u["balance"] = round(u.get("balance", 0) + credit, 2)
+    u["welcome_credit"] = credit
 
 def do_signup(handler, body):
+    if not SETTINGS.get("signup_open", True):
+        raise AuthError(503, "Đăng ký tạm đóng — admin đang bảo trì hệ thống.")
     ip = fake_mail_check(handler)   # đang bị cấm gửi code (spam mail ảo)?
     if ip_is_banned(DB, ip):
         raise AuthError(403, "This network is banned from creating accounts (abuse).")
@@ -1631,6 +1797,11 @@ class Handler(SimpleHTTPRequestHandler):
         u = urllib.parse.urlparse(self.path)
         body = self._read_body()
 
+        # maintenance mode: chặn mọi API trừ admin (admin console vẫn điều khiển được)
+        if SETTINGS.get("maintenance") and not (u.path.startswith("/api/admin") or u.path.startswith("/api/auth/admin")):
+            self._json({"error": "Hệ thống đang bảo trì. Vui lòng thử lại sau ít phút."}, 503)
+            return
+
         auth_routes = {
             "/api/auth/signup": lambda: do_signup(self, body),
             "/api/auth/verify": lambda: do_verify(body),
@@ -1658,11 +1829,18 @@ class Handler(SimpleHTTPRequestHandler):
             "/api/auth/pricing": lambda: do_api_pricing(body),
             "/api/auth/my-billing": lambda: do_my_billing(body),
             "/api/auth/usage": lambda: do_usage(body),
+            "/api/auth/announcements": lambda: {"ok": True, "announcements": DB.get("announcements", [])[:10]},
             "/api/admin/users": lambda: do_admin_users(body, self),
             "/api/admin/stats": lambda: do_admin_stats(body, self),
             "/api/admin/topups": lambda: do_admin_topups(body, self),
             "/api/admin/payment-cfg": lambda: do_admin_action(dict(body, action="payment-cfg"), self),
             "/api/admin/paypal-cfg": lambda: do_admin_action(dict(body, action="paypal-cfg"), self),
+            "/api/admin/settings": lambda: do_admin_settings(body, self),
+            "/api/admin/announce": lambda: do_admin_announce(body, self),
+            "/api/admin/ipbans": lambda: do_admin_ipbans(body, self),
+            "/api/admin/user-detail": lambda: do_admin_user_detail(body, self),
+            "/api/admin/server-restart": lambda: do_admin_server_restart(body, self),
+            "/api/admin/clear": lambda: do_admin_clear(body, self),
         }
         if u.path in auth_routes:
             try:
@@ -1706,7 +1884,7 @@ class Handler(SimpleHTTPRequestHandler):
                 self._json({"error": f"Server error: {e}"}, 500)
                 return
             req_model = body.get("model") if isinstance(body, dict) else None
-            if req_model in PRO_MODELS and usage.get("tier", "free") != "pro":
+            if req_model in PRO_MODELS and usage.get("tier", "free") != "pro" and SETTINGS.get("pro_gate", True):
                 self._json({"error": "Model nflashx-1.0-pro requires a Pro-tier API key (free keys get HTTP 403). "
                                     "Upgrade your account tier in the API Platform to call it."}, 403)
                 return
@@ -1768,6 +1946,10 @@ class Handler(SimpleHTTPRequestHandler):
 
 if __name__ == "__main__":
     init_sqlite()
+    load_settings()
+    if not API_KEY:
+        print("[!] AGNES_KEY is not set — upstream API calls will fail with 401. "
+              "Set the AGNES_KEY environment variable before starting the server.")
     print(f"NFlashX server -> http://127.0.0.1:{PORT}  (static + API proxy + auth)")
     print(f"  db: {DB_PATH}")
     print(f"  sqlite (self-serve + usage): {SQLITE_PATH}")
