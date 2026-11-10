@@ -39,7 +39,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 PORT = int(os.environ.get("PORT", 8600))
 API_KEY = os.environ.get("AGNES_KEY", "")
 UPSTREAM = "https://apihub.agnes-ai.com"
-ADMIN_KEY = os.environ.get("NFLASHX_ADMIN_KEY", "nfx-admin-RjCoETSaeGjDKODmWkiJuRm1JvVfmauG")
+ADMIN_KEY = os.environ.get("ADMIN_KEY", "")
 ROOT = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(ROOT, "data")
 DB_PATH = os.path.join(DATA, "db.json")
@@ -1950,6 +1950,9 @@ if __name__ == "__main__":
     if not API_KEY:
         print("[!] AGNES_KEY is not set — upstream API calls will fail with 401. "
               "Set the AGNES_KEY environment variable before starting the server.")
+    if not ADMIN_KEY:
+        print("[!] ADMIN_KEY is not set — Admin Console login will fail. "
+              "Set the ADMIN_KEY environment variable before starting the server.")
     print(f"NFlashX server -> http://127.0.0.1:{PORT}  (static + API proxy + auth)")
     print(f"  db: {DB_PATH}")
     print(f"  sqlite (self-serve + usage): {SQLITE_PATH}")
