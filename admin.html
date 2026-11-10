@@ -65,7 +65,10 @@ tr:hover td{background:rgba(255,255,255,.02)}
   </div>
 
   <div class="wrap">
-    <h2>Recent Requests (50 gần nhất)</h2>
+    <h2 style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <span>Recent Requests (50 gần nhất)</span>
+      <button class="btn danger" id="clearUsage">🧹 Dọn sạch</button>
+    </h2>
     <table id="tRecent"><thead><tr><th>Time</th><th>User</th><th>Key</th><th>Endpoint</th><th>IP</th></tr></thead>
     <tbody><tr><td colspan="5" class="empty">Loading…</td></tr></tbody></table>
   </div>
@@ -101,7 +104,17 @@ tr:hover td{background:rgba(255,255,255,.02)}
   </div>
 
   <div class="wrap">
-    <h2>Pending Recharge Requests</h2>
+    <h2 style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+      <span>Pending Recharge Requests
+        <span style="margin-left:10px;display:inline-flex;gap:5px">
+          <button class="btn tp-filter on" data-f="pending">Pending</button>
+          <button class="btn tp-filter" data-f="approved">Approved</button>
+          <button class="btn tp-filter" data-f="rejected">Rejected</button>
+          <button class="btn tp-filter" data-f="all">All</button>
+        </span>
+      </span>
+      <button class="btn danger" id="clearTopups">🧹 Dọn sạch</button>
+    </h2>
     <table id="tTopups"><thead><tr><th>Time</th><th>User</th><th>Amount</th><th>Memo</th><th>Status</th><th>Action</th></tr></thead>
     <tbody><tr><td colspan="6" class="empty">Loading…</td></tr></tbody></table>
   </div>
@@ -142,9 +155,39 @@ async function loadStats(){
     `<tr><td class="mono">${dt(x.ts)}</td><td>${esc(x.email)}</td><td class="mono">${esc(x.api_key)}</td><td class="mono">${esc(x.endpoint)}</td><td class="mono">${esc(x.ip||'—')}</td></tr>`
   ).join('') : '<tr><td colspan="5" class="empty">Chưa có request nào hôm nay.</td></tr>';
 }
+let TP_FILTER = 'pending';
+function armButton(btn, label, fn){
+  if (!btn._armed){
+    btn._armed = true; btn.dataset.orig = btn.textContent;
+    btn.textContent = 'Bấm lần nữa để xác nhận!';
+    setTimeout(() => { btn._armed = false; btn.textContent = btn.dataset.orig; }, 3500);
+    return;
+  }
+  btn._armed = false; btn.textContent = btn.dataset.orig || label;
+  fn();
+}
+function bindClear(){
+  const ct = document.getElementById('clearTopups');
+  const cu = document.getElementById('clearUsage');
+  if (ct) ct.onclick = () => armButton(ct, 'Dọn sạch', async () => {
+    await adminCall('/admin/clear', { target: 'topups' });
+    toast('Đã dọn sạch lịch sử nạp tiền.'); loadTopups(); loadStats(); loadUsers();
+  });
+  if (cu) cu.onclick = () => armButton(cu, 'Dọn sạch', async () => {
+    await adminCall('/admin/clear', { target: 'usage' });
+    toast('Đã dọn sạch usage log.'); loadStats(); loadUsers();
+  });
+  document.querySelectorAll('.tp-filter').forEach(b => b.onclick = () => {
+    TP_FILTER = b.dataset.f;
+    document.querySelectorAll('.tp-filter').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    loadTopups();
+  });
+}
 async function loadTopups(){
   const r = await adminCall('/admin/topups');
-  const list = (r.topups||[]).slice().reverse();
+  let list = (r.topups||[]).slice().reverse();
+  if (TP_FILTER !== 'all') list = list.filter(t => t.status === TP_FILTER);
   const tb = document.querySelector('#tTopups tbody');
   tb.innerHTML = list.length ? list.map(t =>
     `<tr><td class="mono">${dt(t.ts)}</td><td>${esc(t.email)}</td><td class="mono">$${t.amount}${t.plan ? ' <span class="tag pro">PLAN ' + esc(t.plan).toUpperCase() + '</span>' : ''}</td>
@@ -152,7 +195,7 @@ async function loadTopups(){
      <td><span class="tag ${t.status==='pending'?'pend':t.status==='approved'?'ok':'banned'}">${t.status}</span></td>
      <td>${t.status==='pending' ? `<button class="btn ok" onclick="topup('${t.id}','approve')">Approve</button>
         <button class="btn danger" onclick="topup('${t.id}','reject')">Reject</button>` : '—'}</td></tr>`
-  ).join('') : '<tr><td colspan="6" class="empty">Không có yêu cầu nạp tiền nào.</td></tr>';
+  ).join('') : '<tr><td colspan="6" class="empty">Không có yêu cầu nào (' + TP_FILTER + ').</td></tr>';
 }
 async function loadPayCfg(){
   const r = await adminCall('/admin/payment-cfg', { action: 'payment-cfg' });
@@ -235,6 +278,7 @@ async function setTier(email, tier){ await api('/api/auth/admin/ban', { token: s
 
 (async () => {
   document.getElementById('whoami').textContent = sess.email || '';
+  bindClear();
   try {
     await loadStats();
     await loadTopups();

@@ -1958,4 +1958,5 @@ if __name__ == "__main__":
     print(f"  sqlite (self-serve + usage): {SQLITE_PATH}")
     print(f"  mail: {'configured' if load_json_cfg('mail_config.json') else 'NOT configured (dev codes printed to console)'}")
     print(f"  oauth: {'configured' if load_json_cfg('oauth_config.json') else 'NOT configured'}")
-    ThreadingHTTPServer(("127.0.0.1", PORT), Handler).serve_forever()
+    BIND = os.environ.get("BIND", "127.0.0.1")   # serv00/VPS: BIND=0.0.0.0
+ThreadingHTTPServer((BIND, PORT), Handler).serve_forever()
