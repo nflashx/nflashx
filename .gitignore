@@ -13,3 +13,5 @@ start_web.bat
 AUTH-SETUP.md
 tools/
 account.html
+server.py
+secrets.env.example
