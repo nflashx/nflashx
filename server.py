@@ -53,7 +53,7 @@ ROUTES = {
 
 MODEL_MAP = {
     "n-flashx-1.0-flash": "agnes-2.5-flash",      # developer API naming (spec /v1)
-    "nflashx-1.0-pro": "agnes-2.5-flash",         # Pro = CÙNG engine, full power (TIER_POLICY pro)
+    "nflashx-1.0-pro": "agnes-2.5-flash",         # Pro = CÙNG engine agnes-2.5-flash, full power (TIER_POLICY pro); 3.0 để nguyên, chưa dùng
     "n-flashx-1.0-pro": "agnes-2.5-flash",
     "nflashx-vision-1.0-flash": "agnes-image-2.5-flash",   # flagship image (trùng id trang docs)
     "nflashx-vision-1.5": "agnes-image-2.5-flash",         # legacy alias (prefs cũ trong browser)
@@ -263,8 +263,20 @@ def apply_tier_policy(body, tier):
     return body
 
 # ------------------------------------------------- self-serve registration
+def signup_cap_reached():
+    """Launch window: cap the total number of accounts (0 = unlimited)."""
+    cap = int(SETTINGS.get("signup_cap") or 0)
+    return cap > 0 and len(DB["users"]) >= cap
+
+def signup_cap_error():
+    cap = int(SETTINGS.get("signup_cap") or 0)
+    return AuthError(403, f"Launch limit reached: the first {cap} accounts are already taken. "
+                          "Sign-up is closed for now — see you in the next wave.")
+
 def do_register(body):
     """POST /v1/auth/register  {"email": "..."} → returns a fresh nfx- key immediately."""
+    if signup_cap_reached():
+        raise signup_cap_error()
     email = (body.get("email") or "").strip().lower()
     if not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", email):
         raise AuthError(400, "Please provide a valid email address.")
@@ -393,13 +405,14 @@ ADMIN_SETTINGS_PATH = os.path.join(DATA, "admin_settings.json")
 SETTINGS = {
     "usd_vnd": 0, "instant_topup": True,
     "signup_credit": 1.0, "ip_credit_daily": 2.0,
-    "rate_limit_free": 1.0, "rate_limit_pro": 0.1,
+    "rate_limit_free": 2.0, "rate_limit_pro": 1.0,
     "flash_cap": 4096, "pro_cap": 8192,
     "flash_in": 0.10, "flash_out": 0.15,
     "pro_in": 0.40, "pro_out": 0.70,
     "vision_price": 0.01, "motion_price": 0.025,
     "persona_flash": "", "persona_pro": "",
     "pro_gate": True, "maintenance": False, "signup_open": True,
+    "signup_cap": 100,
 }
 
 def load_settings():
@@ -473,7 +486,8 @@ def payment_info(rec):
     rate = usd_to_vnd_rate()
     vnd = int(round(rec["amount"] * rate))
     out = {"memo": memo, "amount": rec["amount"], "vnd": vnd, "rate": round(rate, 2),
-           "paypal": bool(load_paypal_cfg().get("client_id"))}
+           "paypal": bool(load_paypal_cfg().get("client_id")),
+           "usdt": (cfg.get("usdt") or "").strip()}
     if cfg.get("bank") and cfg.get("account"):
         url = ("https://img.vietqr.io/image/%s-%s-compact2.png"
                "?amount=%d&addInfo=%s&accountName=%s&style=noLogo"
@@ -482,7 +496,7 @@ def payment_info(rec):
                   urllib.parse.quote(cfg.get("name", "NFlashX"))))
         out.update({"bank": cfg["bank"], "account": cfg["account"],
                     "name": cfg.get("name", ""), "vietqr": url})
-    if not out.get("vietqr") and not out["paypal"]:
+    if not out.get("vietqr") and not out["paypal"] and not out.get("usdt"):
         return None
     return out
 
@@ -802,7 +816,7 @@ def do_admin_settings(body, handler):
     require_admin(body)
     keys_num = ("usd_vnd", "signup_credit", "ip_credit_daily", "rate_limit_free", "rate_limit_pro",
                 "flash_in", "flash_out", "pro_in", "pro_out", "vision_price", "motion_price")
-    keys_int = ("flash_cap", "pro_cap")
+    keys_int = ("flash_cap", "pro_cap", "signup_cap")
     keys_bool = ("instant_topup", "pro_gate", "maintenance", "signup_open")
     keys_str = ("persona_flash", "persona_pro")
     if any(k in body for k in list(keys_num) + list(keys_int) + list(keys_bool) + list(keys_str)):
@@ -820,6 +834,44 @@ def do_admin_settings(body, handler):
                 SETTINGS[k] = str(body[k] or "")
         save_settings(); apply_settings()
     return {"ok": True, "settings": SETTINGS}
+
+def do_admin_agnes_keys(body, handler):
+    """Quản lý pool key Agnes: {"add": "key"} để thêm, {"keys": [...]} để thay toàn bộ."""
+    require_admin(body)
+    changed = False
+    if body.get("add"):
+        raw = body.get("add")
+        if isinstance(raw, str):
+            lines = [x for x in raw.replace(chr(13), "").split(chr(10)) if x.strip()]
+        else:
+            lines = list(raw)
+        cur = load_json_cfg("agnes_keys.json") or []
+        cur = [str(x).strip() for x in cur if str(x).strip()]
+        for k in lines:
+            k = str(k).strip()
+            if k and k not in cur and k != (API_KEY or ""):
+                cur.append(k)
+                changed = True
+        if changed:
+            save_json_cfg("agnes_keys.json", cur)
+            reload_agnes_keys()
+    if body.get("keys") is not None:
+        raw = body.get("keys")
+        lines = raw.splitlines() if isinstance(raw, str) else list(raw or [])
+        clean = []
+        for k in lines:
+            k = str(k).strip()
+            if k and k not in clean and k != (API_KEY or ""):
+                clean.append(k)
+        save_json_cfg("agnes_keys.json", clean)
+        reload_agnes_keys()
+        changed = True
+    usage = [_AGNES_USAGE.get(k, 0) for k in AGNES_KEYS]
+    return {"ok": True, "count": len(AGNES_KEYS), "changed": changed,
+            "masked": [mask_key(k) for k in AGNES_KEYS],
+            "usage": usage,
+            "usage_str": "/".join(str(x) for x in usage),
+            "total_req": sum(usage)}
 
 def do_admin_announce(body, handler):
     require_admin(body)
@@ -1165,6 +1217,56 @@ def load_json_cfg(name):
     with open(p, encoding="utf-8") as f:
         return json.load(f)
 
+def save_json_cfg(name, obj):
+    p = os.path.join(DATA, name)
+    tmp = p + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(obj, f, ensure_ascii=False, indent=2)
+    os.replace(tmp, p)
+
+# ---------------------------------------------------------- Agnes key pool
+# Nhiều key xoay vòng: 1 acc Agnes kéo quá nhiều user sẽ bị rate-limit/die.
+AGNES_KEYS = []
+_AGNES_STATE = {}          # key -> thời điểm hết cooldown
+_AGNES_USAGE = {}          # key -> số request đã gửi qua key này (xoay liên tục)          # key -> thời điểm hết cooldown
+_AGNES_RR = {"i": 0}
+_AGNES_LOCK = threading.Lock()
+
+def reload_agnes_keys():
+    global AGNES_KEYS
+    raw = load_json_cfg("agnes_keys.json") or []
+    keys = []
+    if isinstance(raw, list):
+        for k in raw:
+            k = str(k).strip()
+            if k and k not in keys:
+                keys.append(k)
+    env = (API_KEY or "").strip()
+    if env and env not in keys:
+        keys.insert(0, env)
+    AGNES_KEYS = keys
+    return keys
+
+def mask_key(k):
+    return (k[:6] + "..." + k[-4:]) if len(k) > 12 else ("..." if k else "")
+
+def agnes_key_order():
+    """Xoay vòng key; key vừa bị 401/402/429 bị tạm nghỉ."""
+    with _AGNES_LOCK:
+        ks = list(AGNES_KEYS) or reload_agnes_keys()
+        if not ks:
+            return []
+        t = now()
+        start = _AGNES_RR["i"] % len(ks)
+        _AGNES_RR["i"] = (start + 1) % len(ks)
+    order = ks[start:] + ks[:start]
+    alive = [k for k in order if _AGNES_STATE.get(k, 0) <= t]
+    return alive or order
+
+def agnes_key_penalize(k, status):
+    secs = 3600 if status == 401 else (600 if status == 402 else 120)
+    _AGNES_STATE[k] = now() + secs
+
 def send_mail(to, subject, html_body, text_body=""):
     """Gửi email qua SMTP khi đã cấu hình mail_config.json; không thì in ra console (dev)."""
     cfg = load_json_cfg("mail_config.json")
@@ -1358,6 +1460,8 @@ def grant_signup_credit(u, ip):
 def do_signup(handler, body):
     if not SETTINGS.get("signup_open", True):
         raise AuthError(503, "Đăng ký tạm đóng — admin đang bảo trì hệ thống.")
+    if signup_cap_reached():
+        raise signup_cap_error()
     ip = fake_mail_check(handler)   # đang bị cấm gửi code (spam mail ảo)?
     if ip_is_banned(DB, ip):
         raise AuthError(403, "This network is banned from creating accounts (abuse).")
@@ -1423,6 +1527,10 @@ def do_verify(body):
     if not check_pass(code, p["code_hash"]):
         save_db(DB)
         raise AuthError(400, "Wrong code. Check your email and try again.")
+    if signup_cap_reached():
+        del DB["pending"][email]
+        save_db(DB)
+        raise signup_cap_error()
     del DB["pending"][email]
     email_clean = email
     # KHÔNG tự sinh api_key khi verify — khách tạo key bằng nút "Create new secret key"
@@ -1652,6 +1760,8 @@ def oauth_callback(provider, qs, base, ip=""):
     email = email.lower()
     u = DB["users"].get(email)
     if not u:
+        if signup_cap_reached():
+            raise signup_cap_error()
         u = {"email": email, "name": name or email.split("@")[0], "provider": provider,
              "verified": True, "created": now(), "plan": "Free",
              "banned": False,
@@ -1666,6 +1776,55 @@ def oauth_callback(provider, qs, base, ip=""):
     return token
 
 # ---------------------------------------------------------------- handler
+def scrub_sse_line(line):
+    """Loc reasoning_content/provider fields khoi tung dong SSE truoc khi forward."""
+    if not line.startswith(b"data:"):
+        return line
+    raw = line[5:].strip()
+    if not raw or raw == b"[DONE]":
+        return line
+    try:
+        d = json.loads(raw)
+    except Exception:
+        return line
+    ch = d.get("choices")
+    if isinstance(ch, list):
+        for c in ch:
+            if not isinstance(c, dict):
+                continue
+            delta = c.get("delta")
+            if isinstance(delta, dict):
+                for k in ("reasoning_content", "reasoning", "provider_specific_fields"):
+                    delta.pop(k, None)
+            c.pop("provider_specific_fields", None)
+    return b"data: " + json.dumps(d, ensure_ascii=False).encode() + b"\n\n"
+
+def scrub_upstream(payload):
+    """Giữ response sạch: bỏ reasoning_content + provider_specific_fields
+    (chain-of-thought tiếng Anh của upstream lộ ra là fingerprint rõ nhất)."""
+    try:
+        d = json.loads(payload)
+    except Exception:
+        return payload
+    if not isinstance(d, dict):
+        return payload
+    changed = False
+    choices = d.get("choices")
+    if isinstance(choices, list):
+        for c in choices:
+            if not isinstance(c, dict):
+                continue
+            msg = c.get("message")
+            if isinstance(msg, dict):
+                for k in ("reasoning_content", "reasoning", "provider_specific_fields"):
+                    if k in msg:
+                        del msg[k]
+                        changed = True
+            if "provider_specific_fields" in c:
+                del c["provider_specific_fields"]
+                changed = True
+    return json.dumps(d, ensure_ascii=False).encode() if changed else payload
+
 class Handler(SimpleHTTPRequestHandler):
     def __init__(self, *a, **kw):
         super().__init__(*a, directory=ROOT, **kw)
@@ -1718,18 +1877,61 @@ class Handler(SimpleHTTPRequestHandler):
             print("[charge] error:", e)
 
     def _proxy(self, upstream_path, body=None, method="POST", usage_user=None, model=None, kind="text"):
-        headers = {"Authorization": f"Bearer {API_KEY}",
-                   "Content-Type": "application/json", "Accept": "application/json"}
-        req = urllib.request.Request(UPSTREAM + upstream_path, data=body,
-                                     headers=headers, method=method)
-        try:
-            with urllib.request.urlopen(req, timeout=300) as r:
-                payload, status, ctype = r.read(), r.status, r.headers.get("Content-Type", "application/json")
-        except urllib.error.HTTPError as e:
-            payload, status, ctype = e.read(), e.code, "application/json"
-        except Exception as e:
-            payload = json.dumps({"error": str(e)}).encode()
-            status, ctype = 502, "application/json"
+        is_stream = False
+        if body:
+            try:
+                is_stream = bool(json.loads(body).get("stream"))
+            except Exception:
+                is_stream = b'"stream":true' in body.replace(b" ", b"").lower()
+        attempt_keys = agnes_key_order() or [API_KEY]
+        payload, status, ctype = b"{}", 502, "application/json"
+        for idx, key in enumerate(attempt_keys):
+            headers = {"Authorization": f"Bearer {key}",
+                       "Content-Type": "application/json", "Accept": "application/json"}
+            req = urllib.request.Request(UPSTREAM + upstream_path, data=body,
+                                         headers=headers, method=method)
+            try:
+                with urllib.request.urlopen(req, timeout=300) as r:
+                    ctype_u = r.headers.get("Content-Type", "application/json")
+                    if r.status == 200 and is_stream and "event-stream" in (ctype_u or ""):
+                        # ---- streaming passthrough: day tung dong SSE ve client ngay ----
+                        self.send_response(200)
+                        self._cors()
+                        self.send_header("Content-Type", "text/event-stream")
+                        self.send_header("Cache-Control", "no-cache")
+                        self.send_header("X-Accel-Buffering", "no")
+                        self.end_headers()
+                        try:
+                            buf = b""
+                            while True:
+                                chunk = r.read1(4096)
+                                if not chunk:
+                                    break
+                                buf += chunk
+                                while b"\n" in buf:
+                                    line, buf = buf.split(b"\n", 1)
+                                    self.wfile.write(scrub_sse_line(line) + b"\n")
+                                self.wfile.flush()
+                            if buf:
+                                self.wfile.write(scrub_sse_line(buf))
+                                self.wfile.flush()
+                        except Exception:
+                            pass
+                        _AGNES_USAGE[key] = _AGNES_USAGE.get(key, 0) + 1
+                        return
+                    payload, status, ctype = r.read(), r.status, ctype_u
+            except urllib.error.HTTPError as e:
+                payload, status, ctype = e.read(), e.code, "application/json"
+            except Exception as e:
+                payload = json.dumps({"error": str(e)}).encode()
+                status, ctype = 502, "application/json"
+            _AGNES_USAGE[key] = _AGNES_USAGE.get(key, 0) + 1
+            if status in (401, 402, 429) and idx < len(attempt_keys) - 1:
+                agnes_key_penalize(key, status)   # key chết/limit -> thử key kế
+                continue
+            break
+        if 200 <= status < 300:
+            payload = scrub_upstream(payload)
         if 200 <= status < 300 and usage_user:
             self._charge_usage(usage_user, model, payload, kind)
         self.send_response(status)
@@ -1753,14 +1955,38 @@ class Handler(SimpleHTTPRequestHandler):
         except Exception:
             return {}
 
+    def _canonical_redirect(self):
+        """URL instabox dai -> tu nhay sang base URL chinh thuc (GET/HEAD only;
+        POST giu nguyen de API client va panel khong bi doi method)."""
+        fwd = (self.headers.get("X-Forwarded-Host") or "").lower()
+        via_proxy = self.headers.get("X-NFX-Proxy") == "1"
+        if "instabox.tech" in fwd and not via_proxy and self.command in ("GET", "HEAD"):
+            self.send_response(302)
+            self.send_header("Location", "https://api.nflashx.workers.dev" + self.path)
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return True
+        return False
+
+    def public_base(self):
+        """Base URL cong khai: uu tien host goc ma browser dung (worker forward qua X-Original-Host)."""
+        orig = (self.headers.get("X-Original-Host") or "").split(",")[0].strip()
+        xfh = (self.headers.get("X-Forwarded-Host") or "").split(",")[0].strip()
+        host = orig or xfh or (self.headers.get("Host") or "").strip()
+        if not host or host.startswith("127.0.0.1") or host.startswith("localhost"):
+            return f"http://127.0.0.1:{PORT}"
+        return "https://" + host
+
     def do_GET(self):
+        if self._canonical_redirect():
+            return
         u = urllib.parse.urlparse(self.path)
         q = urllib.parse.parse_qs(u.query)
 
         if u.path.startswith("/api/auth/oauth/") and u.path.endswith("/callback"):
             provider = u.path.split("/")[-2]
             try:
-                token = oauth_callback(provider, q, f"http://127.0.0.1:{PORT}", client_ip(self))
+                token = oauth_callback(provider, q, self.public_base(), client_ip(self))
                 self._redirect(f"/auth-callback.html?token={token}")
             except AuthError as e:
                 self._redirect(f"/auth-callback.html?error={urllib.parse.quote(e.message)}")
@@ -1768,13 +1994,13 @@ class Handler(SimpleHTTPRequestHandler):
 
         if u.path == "/api/auth/oauth/google/start":
             try:
-                self._json(oauth_start("google", f"http://127.0.0.1:{PORT}"))
+                self._json(oauth_start("google", self.public_base()))
             except AuthError as e:
                 self._json({"error": e.message}, e.status)
             return
         if u.path == "/api/auth/oauth/github/start":
             try:
-                self._json(oauth_start("github", f"http://127.0.0.1:{PORT}"))
+                self._json(oauth_start("github", self.public_base()))
             except AuthError as e:
                 self._json({"error": e.message}, e.status)
             return
@@ -1836,6 +2062,7 @@ class Handler(SimpleHTTPRequestHandler):
             "/api/admin/payment-cfg": lambda: do_admin_action(dict(body, action="payment-cfg"), self),
             "/api/admin/paypal-cfg": lambda: do_admin_action(dict(body, action="paypal-cfg"), self),
             "/api/admin/settings": lambda: do_admin_settings(body, self),
+            "/api/admin/agnes-keys": lambda: do_admin_agnes_keys(body, self),
             "/api/admin/announce": lambda: do_admin_announce(body, self),
             "/api/admin/ipbans": lambda: do_admin_ipbans(body, self),
             "/api/admin/user-detail": lambda: do_admin_user_detail(body, self),
@@ -1947,6 +2174,7 @@ class Handler(SimpleHTTPRequestHandler):
 if __name__ == "__main__":
     init_sqlite()
     load_settings()
+    reload_agnes_keys()
     if not API_KEY:
         print("[!] AGNES_KEY is not set — upstream API calls will fail with 401. "
               "Set the AGNES_KEY environment variable before starting the server.")

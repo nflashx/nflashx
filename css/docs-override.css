@@ -1,0 +1,62 @@
+/* ============================================================
+   NFlashX Docs override - layout riêng (không 3-cột kiểu cũ)
+   ============================================================ */
+.docs-body { display: block; max-width: 960px; margin: 0 auto; padding: 26px 5vw 90px; }
+
+.docs-rail-wrap {
+  position: sticky; top: 0; z-index: 40;
+  background: rgba(4, 6, 10, .88); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line); padding: 10px 4vw;
+}
+.docs-rail { display: flex; gap: 8px; overflow-x: auto; max-width: 1240px; margin: 0 auto; scrollbar-width: none; }
+.docs-rail::-webkit-scrollbar { display: none; }
+.rail-chip {
+  flex: none; text-decoration: none; color: var(--mut); font-size: 13px;
+  padding: 7px 15px; border-radius: 999px; border: 1px solid var(--line);
+  background: rgba(255, 255, 255, .03); transition: .2s;
+}
+.rail-chip:hover { color: var(--ink); border-color: rgba(139, 92, 246, .5); }
+.rail-chip.on {
+  color: #0a0a12; background: linear-gradient(92deg, #8b5cf6, #22d3ee);
+  border-color: transparent; font-weight: 700;
+}
+.rail-chip .badge-soon { font-size: 9px; padding: 2px 6px; }
+
+.doc-main { max-width: 860px; margin: 0 auto; padding: 34px 0 90px; }
+
+.toc-chips {
+  display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+  margin: 16px 0 34px; padding: 10px 14px;
+  border: 1px solid var(--line); border-radius: 14px; background: rgba(255, 255, 255, .03);
+}
+.toc-lbl {
+  font-family: "JetBrains Mono", monospace; font-size: 10px; letter-spacing: 1.6px;
+  color: var(--dim); margin-right: 6px;
+}
+.toc-chip {
+  font-family: "JetBrains Mono", monospace; font-size: 10.5px; color: var(--mut);
+  padding: 4px 11px; border-radius: 999px; border: 1px solid var(--line);
+  background: rgba(255, 255, 255, .03);
+}
+
+.nx-doc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 26px; }
+.nx-doc-card {
+  display: block; position: relative; overflow: hidden;
+  background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+  padding: 20px; text-decoration: none; color: var(--ink); transition: .2s;
+}
+.nx-doc-card::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, rgba(139, 92, 246, 0), rgba(139, 92, 246, .55), rgba(34, 211, 238, .55), rgba(34, 211, 238, 0));
+}
+.nx-doc-card:hover { border-color: rgba(139, 92, 246, .5); transform: translateY(-2px); }
+.nx-doc-card b { font-family: "Sora", sans-serif; font-size: 15px; }
+.nx-doc-card p { color: var(--mut); font-size: 12.5px; line-height: 1.6; margin: 8px 0 12px; }
+.nx-doc-card .dd-tag {
+  font-family: "JetBrains Mono", monospace; font-size: 9.5px; letter-spacing: 1px;
+  color: var(--cyan); border: 1px solid rgba(34, 211, 238, .35);
+  padding: 3px 8px; border-radius: 999px; display: inline-block; margin-bottom: 10px;
+}
+.nx-doc-card .dd-go { color: var(--cyan); font-size: 12px; font-weight: 600; }
+
+.dsearch:focus-within { border-color: rgba(139, 92, 246, .55); box-shadow: 0 0 0 3px rgba(139, 92, 246, .15); }

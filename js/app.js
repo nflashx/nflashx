@@ -99,6 +99,12 @@ if (nav) addEventListener('scroll', () => nav.classList.toggle('scrolled', scrol
     cur = (i + slides.length) % slides.length;
     slides.forEach((s, k) => s.classList.toggle('on', k === cur));
     dots.forEach((d, k) => d.classList.toggle('on', k === cur));
+    /* video chi play khi dung o slide Motion — tiet kiem bandwidth */
+    const v = hero.querySelector('video');
+    if (v) {
+      if (slides[cur].classList.contains('s-vid')) { v.play().catch(() => {}); }
+      else { v.pause(); }
+    }
     restart();
   }
   function restart() { clearInterval(timer); timer = setInterval(() => go(cur + 1), 6500); }

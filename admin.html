@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Console — NFlashX</title>
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#04060a;--bg2:#070b12;--ink:#f2f6f9;--mut:#96a3b2;--dim:#5c6975;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.14);--card:rgba(255,255,255,.03);--green:#25e39a;--teal:#12d7c6;--red:#ff6b6b;--amber:#ffb84d;--radius:16px;--mono:"JetBrains Mono",Consolas,monospace}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -128,6 +128,12 @@ tr:hover td{background:rgba(255,255,255,.02)}
 </main>
 <div id="msg"></div>
 <script>
+const _qp = new URLSearchParams(location.search);
+if (_qp.get('token')) {
+  localStorage.setItem('nfx_session', JSON.stringify({ token: _qp.get('token') }));
+  _qp.delete('token');
+  history.replaceState(null, '', location.pathname + (_qp.toString() ? '?' + _qp.toString() : ''));
+}
 const sess = JSON.parse(localStorage.getItem('nfx_session') || 'null');
 if (!sess || !sess.token) location.replace('login.html');
 const api = (p, body) => fetch(p, {

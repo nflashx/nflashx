@@ -2,8 +2,8 @@
    NFlashX Docs — content router (brand-style docs)
    Sidebar groups collapse; clicking a group reveals its models.
    ============================================================ */
-/* Base URL THAT cua platform — ví dụ copy-paste chạy được ngay */
-const API_BASE = location.origin.startsWith("http") ? location.origin : "http://127.0.0.1:8600";
+/* Real platform base URL — examples are copy-paste ready */
+const API_BASE = "https://nflashx.cc.cd";   // base URL chinh thuc (custom domain)   // base URL chinh thuc (worker proxy)
 
 const MODELS = {
   text: [
@@ -503,48 +503,39 @@ function videoModelPage(m) {
   };
 }
 
-/* ---------- sidebar ---------- */
-const side = document.getElementById('dside');
+/* ---------- top rail (thay sidebar 3-cot kieu cu) ---------- */
+const rail = document.getElementById('drail');
 const main = document.getElementById('docMain');
-const dtoc = document.getElementById('dtoc');
 
-function renderSide(activeKey) {
-  const group = (key, label, models) => {
-    const items = models.map(m =>
-      `<li><a href="#m=${m.id}" class="${activeKey === 'm=' + m.id ? 'on' : ''}">${m.name}${m.soon ? ' <span class="badge-soon">Soon</span>' : ''}</a></li>`).join('');
-    const open = models.some(m => 'm=' + m.id === activeKey) ? ' open' : '';
-    return `
-      <div class="grp-group${open}" data-g="${key}">
-        <div class="grp" data-toggle="${key}">${label} <span class="car">▸</span></div>
-        <ul class="grp-list">${items}</ul>
-      </div>`;
-  };
-  side.innerHTML = `
-    <h6>Get Started</h6>
-    <ul>
-      <li><a href="#overview" class="${activeKey === 'overview' ? 'on' : ''}">Overview</a></li>
-      <li><a href="#quickstart" class="${activeKey === 'quickstart' ? 'on' : ''}">Quickstart</a></li>
-    </ul>
-    <h6>Use Guides</h6>
-    ${group('text', 'Text', MODELS.text)}
-    ${group('image', 'Image', MODELS.image)}
-    ${group('video', 'Video', MODELS.video)}
-    <h6>Other</h6>
-    <ul><li><a href="#integration" class="${activeKey === 'integration' ? 'on' : ''}">Integration</a></li></ul>`;
+const RAIL = [
+  ['overview', 'Overview'],
+  ['quickstart', 'Quickstart'],
+  ['m=nflashx-1.0-flash', '1.0 Flash'],
+  ['m=nflashx-1.0-pro', '1.0 Pro'],
+  ['m=nflashx-vision-1.0-flash', 'Vision 1.0'],
+  ['m=nflashx-motion-1.0', 'Motion 1.0'],
+  ['integration', 'Integration'],
+  ['plans', 'Billing'],
+  ['pricing', 'Pricing'],
+  ['faqs', 'FAQs'],
+  ['legal', 'Legal'],
+];
+
+function renderRail(activeKey) {
+  rail.innerHTML = RAIL.map(([k, label]) => {
+    const on = activeKey === k ? ' on' : '';
+    const soon = k === 'm=nflashx-motion-1.0' ? ' <span class="badge-soon">Soon</span>' : '';
+    return `<a href="#${k}" class="rail-chip${on}">${label}${soon}</a>`;
+  }).join('');
 }
-
-/* group toggle */
-side.addEventListener('click', e => {
-  const g = e.target.closest('.grp');
-  if (!g) return;
-  const box = g.parentElement;
-  const wasOpen = box.classList.contains('open');
-  side.querySelectorAll('.grp-group.open').forEach(x => x.classList.remove('open'));
-  if (!wasOpen) box.classList.add('open');
-});
 
 /* ---------- page render ---------- */
 function renderPage(key) {
+  renderRail(key);
+  if (key === 'overview') {
+    renderDashboard();
+    return;
+  }
   let p;
   if (key.startsWith('m=')) {
     const all = [...MODELS.text, ...MODELS.image, ...MODELS.video];
@@ -554,7 +545,7 @@ function renderPage(key) {
     p = PAGES[key] || PAGES.overview;
     p = { ...p, kicker: '', copy: true };
   }
-  renderSide(key);
+  const chips = (p.toc || []).map(t => `<span class="toc-chip">${t}</span>`).join('');
   main.innerHTML = `
     ${p.kicker ? `<div class="kicker">${p.kicker}</div>` : ''}
     <div class="doc-head">
@@ -562,10 +553,65 @@ function renderPage(key) {
       ${p.copy ? '<button class="copy-page" id="copyPage">⧉ Copy page</button>' : ''}
     </div>
     <p class="lede">${p.lede}</p>
+    ${chips ? `<div class="toc-chips"><span class="toc-lbl">ON THIS PAGE</span>${chips}</div>` : ''}
     ${p.body}`;
-  dtoc.innerHTML = `<h6>≡ On this page</h6><ul>${p.toc.map(t =>
-    `<li class="${/^[A-Z]/.test(t) && !/^Endpoint|^Headers|^Request|^Image|^Response/.test(t) ? '' : 'lvl2'}"><a href="#">${t}</a></li>`).join('')}</ul>`;
   bindPage();
+  scrollTo(0, 0);
+}
+
+function renderDashboard() {
+  const models = [...MODELS.text, ...MODELS.image, ...MODELS.video];
+  const cards = [
+    { k: 'quickstart', t: 'Quickstart', d: PAGES.quickstart.lede, tag: 'START HERE' },
+    ...models.map(m => ({ k: 'm=' + m.id, t: m.name, d: m.lede,
+      tag: (m.kind || '').toUpperCase() + (m.soon ? ' · SOON' : '') })),
+    { k: 'integration', t: 'Integration', d: (PAGES.integration || {}).lede || 'Connect NFlashX to your stack.', tag: 'GUIDE' },
+    { k: 'plans', t: 'Billing & Top-up', d: (PAGES.plans || {}).lede || '', tag: 'BILLING' },
+    { k: 'pricing', t: 'Model Pricing', d: (PAGES.pricing || {}).lede || '', tag: 'BILLING' },
+    { k: 'faqs', t: 'FAQs', d: (PAGES.faqs || {}).lede || '', tag: 'HELP' },
+    { k: 'legal', t: 'Legal', d: (PAGES.legal || {}).lede || '', tag: 'LEGAL' },
+  ];
+  main.innerHTML = `
+    <div class="kicker">Developer Guides</div>
+    <div class="doc-head"><h1>NFlashX Docs</h1></div>
+    <p class="lede">The whole API in one place — pick a page to get started.</p>
+    <div class="nx-doc-grid">${cards.map(c => `
+      <a class="nx-doc-card" href="#${c.k}">
+        <span class="dd-tag">${c.tag}</span>
+        <b>${c.t}</b>
+        <p>${c.d}</p>
+        <span class="dd-go">Read →</span>
+      </a>`).join('')}</div>`;
+  bindPage();
+  scrollTo(0, 0);
+}
+
+function doSearch(q) {
+  q = (q || '').trim().toLowerCase().replace(/[<>&"]/g, '');
+  if (!q) { route(); return; }
+  renderRail('');
+  const idx = [
+    { k: 'overview', t: 'Overview', d: PAGES.overview.lede },
+    { k: 'quickstart', t: 'Quickstart', d: PAGES.quickstart.lede },
+    ...[...MODELS.text, ...MODELS.image, ...MODELS.video].map(m => ({ k: 'm=' + m.id, t: m.name, d: m.lede })),
+    { k: 'integration', t: 'Integration', d: (PAGES.integration || {}).lede || '' },
+    { k: 'plans', t: 'Billing & Top-up', d: (PAGES.plans || {}).lede || '' },
+    { k: 'pricing', t: 'Model Pricing', d: (PAGES.pricing || {}).lede || '' },
+    { k: 'faqs', t: 'FAQs', d: (PAGES.faqs || {}).lede || '' },
+    { k: 'legal', t: 'Legal', d: (PAGES.legal || {}).lede || '' },
+  ];
+  const hits = idx.filter(x => (x.t + ' ' + x.d).toLowerCase().includes(q));
+  main.innerHTML = `
+    <div class="kicker">Search</div>
+    <div class="doc-head"><h1>Results for "${q}"</h1></div>
+    <p class="lede">${hits.length} trang khớp.</p>
+    <div class="nx-doc-grid">${hits.map(c => `
+      <a class="nx-doc-card" href="#${c.k}">
+        <span class="dd-tag">DOC</span>
+        <b>${c.t}</b>
+        <p>${c.d}</p>
+        <span class="dd-go">Đọc →</span>
+      </a>`).join('') || '<p class="lede">No pages found — try another keyword.</p>'}</div>`;
   scrollTo(0, 0);
 }
 
@@ -617,5 +663,7 @@ addEventListener('keydown', e => {
     e.preventDefault(); document.getElementById('docSearch').focus();
   }
 });
+
+document.getElementById('docSearch').addEventListener('input', e => doSearch(e.target.value));
 
 route();

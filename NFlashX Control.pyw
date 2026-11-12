@@ -6,6 +6,7 @@ from tkinter import ttk
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 HOST, PORT = "127.0.0.1", 8600
+LIVE_URL = "https://8600-agq4wbs7wjamf4ucmhvjkbvu4y.instabox.tech"  # bản chạy thật trên cloud
 CREATE_NO_WINDOW = 0x08000000
 DETACHED = 0x00000008 | 0x00000200
 
@@ -51,8 +52,8 @@ def stop_server():
     if pid:
         subprocess.Popen(["taskkill", "/PID", pid, "/F"], creationflags=CREATE_NO_WINDOW)
 
-def open_admin(): webbrowser.open(f"http://{HOST}:{PORT}/admin.html")
-def open_platform(): webbrowser.open(f"http://{HOST}:{PORT}/platform.html")
+def open_admin(): webbrowser.open(LIVE_URL + "/admin.html")
+def open_platform(): webbrowser.open(LIVE_URL + "/platform.html")
 
 STARTUP_DIR = os.path.join(os.environ["APPDATA"],
     "Microsoft", "Windows", "Start Menu", "Programs", "Startup")
@@ -96,8 +97,8 @@ class App(tk.Tk):
         f = ttk.Frame(self, style="NF.TFrame"); f.pack(pady=10, padx=20, fill="x")
         self.b_start = ttk.Button(f, text="▶  START SERVER", command=self.do_start, style="NF.TButton")
         self.b_stop = ttk.Button(f, text="■  STOP SERVER", command=self.do_stop, style="NF.TButton")
-        self.b_admin = ttk.Button(f, text="🛡  MỞ ADMIN CONSOLE", command=open_admin, style="NF.TButton")
-        self.b_plat = ttk.Button(f, text="🌐  MỞ PLATFORM", command=open_platform, style="NF.TButton")
+        self.b_admin = ttk.Button(f, text="🛡  MỞ ADMIN CONSOLE (LIVE)", command=open_admin, style="NF.TButton")
+        self.b_plat = ttk.Button(f, text="🌐  MỞ PLATFORM (LIVE)", command=open_platform, style="NF.TButton")
         for b in (self.b_start, self.b_stop, self.b_admin, self.b_plat):
             b.pack(fill="x", pady=3, ipady=4)
         self.autovar = tk.BooleanVar(value=autostart_enabled())

@@ -7,14 +7,14 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css?v=18">
 <link rel="stylesheet" href="css/platform.css?v=17">
 </head>
 <body class="plat">
 
 <header class="plat-top">
-  <a class="brandline" href="index.html">
+  <a class="brandline" href="./">
     <img src="assets/logo.svg" alt=""> NFlashX <span class="sep">|</span> <span class="sub">API Platform</span>
   </a>
   <div class="top-right">
@@ -525,50 +525,62 @@ async function loadBalance() {
     <h3 style="font-family:'Space Grotesk';font-size:18px;margin-bottom:4px">Payment</h3>
     <p style="color:#8a949f;font-size:12.5px;margin-bottom:12px" id="payAmountLine"></p>
     <div id="payTabs" style="display:flex;gap:8px;justify-content:center;margin-bottom:14px;flex-wrap:wrap">
-      <button id="tabBank" onclick="payTab('bank')" style="background:linear-gradient(92deg,#0ea86f,#25e39a);color:#03130c;border:none;border-radius:10px;padding:8px 16px;font-weight:700;font-size:12.5px;cursor:pointer">🏦 Chuyển khoản VN</button>
-      <button id="tabPaypal" onclick="payTab('paypal')" style="background:rgba(255,255,255,.06);color:#96a3b2;border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:8px 16px;font-weight:700;font-size:12.5px;cursor:pointer">💳 PayPal · Thẻ quốc tế</button>
+      <button id="tabBank" onclick="payTab('bank')" style="background:linear-gradient(92deg,#0ea86f,#25e39a);color:#03130c;border:none;border-radius:10px;padding:8px 16px;font-weight:700;font-size:12.5px;cursor:pointer">🏦 Bank transfer (VN)</button>
+      <button id="tabPaypal" onclick="payTab('paypal')" style="background:rgba(255,255,255,.06);color:#96a3b2;border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:8px 16px;font-weight:700;font-size:12.5px;cursor:pointer">💳 PayPal · International cards</button>
+      <button id="tabUsdt" onclick="payTab('usdt')" style="display:none;background:rgba(255,255,255,.06);color:#96a3b2;border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:8px 16px;font-weight:700;font-size:12.5px;cursor:pointer">🪙 USDT TRC20</button>
     </div>
 
     <div id="payBank">
       <div style="background:linear-gradient(180deg,rgba(37,227,154,.07),rgba(37,227,154,.02));border:1px solid rgba(37,227,154,.18);border-radius:16px;padding:18px 16px 14px;display:flex;flex-direction:column;align-items:center;gap:12px">
-        <div style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#7ea8a0;font-weight:700">Quét mã để chuyển tiền</div>
+        <div style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#7ea8a0;font-weight:700">Scan to pay</div>
         <div style="background:#fff;border-radius:12px;padding:10px;line-height:0;box-shadow:0 8px 26px rgba(0,0,0,.4)">
-          <img id="payQR" style="width:236px;height:auto;display:block;border-radius:4px" alt="QR chuyển khoản"
+          <img id="payQR" style="width:236px;height:auto;display:block;border-radius:4px" alt="Transfer QR code"
                onerror="this.parentElement.style.display='none';document.getElementById('payQRFallback').style.display='flex'">
         </div>
-        <div id="payQRFallback" style="display:none;width:256px;height:120px;align-items:center;justify-content:center;text-align:center;color:#ff9a9a;font-size:12px;line-height:1.5;border:1px dashed rgba(255,120,120,.4);border-radius:10px">Không tải được mã QR<br>Chuyển khoản theo thông tin bên dưới</div>
+        <div id="payQRFallback" style="display:none;width:256px;height:120px;align-items:center;justify-content:center;text-align:center;color:#ff9a9a;font-size:12px;line-height:1.5;border:1px dashed rgba(255,120,120,.4);border-radius:10px">Could not load the QR code<br>Use the transfer details below</div>
         <div style="text-align:center;line-height:1.5">
           <div style="font-size:15px;font-weight:700;color:#f2f6f9;letter-spacing:.2px" id="payName">—</div>
           <div style="font-size:13.5px;color:#9df3ca;font-family:'JetBrains Mono',Consolas,monospace;letter-spacing:.8px;margin-top:3px" id="payAcc">—</div>
         </div>
-        <div style="font-size:9.5px;color:#5c6975;letter-spacing:.14em;text-transform:uppercase;padding-top:2px">Techcombank · Napas 247 · QR tự động</div>
+        <div style="font-size:9.5px;color:#5c6975;letter-spacing:.14em;text-transform:uppercase;padding-top:2px">Techcombank · Napas 247 · Auto QR</div>
       </div>
       <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:14px;flex-wrap:wrap">
-        <span style="font-size:12px;color:#8a949f">Số tiền</span>
+        <span style="font-size:12px;color:#8a949f">Amount</span>
         <b style="font-size:17px;color:#25e39a" id="payAmtVnd">—</b>
         <span style="font-size:11px;color:#5c6975" id="payAmtUsd"></span>
       </div>
-      <p style="margin:8px 0 0;font-size:11.5px;color:#6b7784;text-align:center;line-height:1.6">Nội dung chuyển khoản đã gắn sẵn trong mã QR.<br>Vui lòng chuyển <b style="color:#96a3b2">đúng số tiền</b> để hệ thống tự xác nhận.</p>
+      <p style="margin:8px 0 0;font-size:11.5px;color:#6b7784;text-align:center;line-height:1.6">The transfer note is embedded in the QR code.<br>Please send <b style="color:#96a3b2">the exact amount</b> so it is confirmed automatically.</p>
+    </div>
+
+    <div id="payUsdt" style="display:none;text-align:center">
+      <div style="padding:16px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.35);border-radius:12px;margin-bottom:12px">
+        <div style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#a78bfa;font-weight:700;margin-bottom:8px">Send the exact amount over TRC20</div>
+        <div style="font-size:13px;color:#c9d2e8;font-family:'JetBrains Mono',monospace;word-break:break-all;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px" id="payUsdtAddr">—</div>
+        <div style="font-size:11.5px;color:#8a949f;margin-top:8px">Network: <b style="color:#a78bfa">TRON (TRC20)</b> · Amount: <b style="color:#25e39a">$<span id="payUsdtAmt">—</span> USDT</b></div>
+      </div>
+      <input type="text" id="payTxid" placeholder="Paste the TXID (transaction hash) after sending" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:11px 14px;color:#f2f6f9;font-family:'JetBrains Mono',monospace;font-size:12.5px;outline:none">
+      <button class="btn-dark sm" id="payTxidBtn" style="margin-top:10px;width:100%" onclick="submitPayTxid()">Submit TXID — awaiting admin confirmation</button>
+      <p style="color:#6b7784;font-size:11px;margin-top:8px;line-height:1.6">After submitting, the admin verifies it on Tronscan — credit is added to your balance automatically.</p>
     </div>
 
     <div id="payPaypal" style="display:none;text-align:center">
       <div style="padding:14px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;margin-bottom:12px">
         <div style="font-size:26px;margin-bottom:4px">💳</div>
         <div style="font-weight:700;font-family:'Space Grotesk'">Pay <span id="payPpAmount"></span> with PayPal</div>
-        <div style="color:#8a949f;font-size:12px;margin-top:4px">Popup thanh toán bật tại chỗ — thẻ quốc tế hoặc số dư PayPal.</div>
+        <div style="color:#8a949f;font-size:12px;margin-top:4px">In-page checkout — international cards or PayPal balance.</div>
       </div>
       <div id="paypal-button-container" style="min-height:52px"></div>
       <div id="ppFallback" style="display:none">
         <button class="btn-dark sm" id="payPpBtn" style="width:100%;background:#ffc439;color:#111;border:none" onclick="startPaypal()">Pay with PayPal →</button>
-        <p style="color:#8a949f;font-size:11.5px;margin-top:6px">Nếu popup bị chặn, bấm nút để mở trang PayPal.</p>
+        <p style="color:#8a949f;font-size:11.5px;margin-top:6px">If the popup is blocked, tap the button to open PayPal.</p>
       </div>
     </div>
 
     <div style="margin-top:12px;padding:11px 14px;background:rgba(37,227,154,.07);border:1px solid rgba(37,227,154,.3);border-radius:12px;font-size:12.5px;line-height:1.55;color:#b9c6d2">
-      Mã đối chiếu <b id="payMemo" style="font-family:'JetBrains Mono',monospace;color:#25e39a;letter-spacing:.4px"></b><br>
-      Admin dùng mã này để xác nhận lệnh chuyển của bạn.
+      Reference code <b id="payMemo" style="font-family:'JetBrains Mono',monospace;color:#25e39a;letter-spacing:.4px"></b><br>
+      The admin uses this code to confirm your transfer.
     </div>
-    <button class="btn-dark sm" style="margin-top:14px;width:100%" onclick="closePayPanel()">Đã thanh toán — chờ admin xác nhận</button>
+    <button class="btn-dark sm" style="margin-top:14px;width:100%" onclick="closePayPanel()">I have paid — awaiting admin confirmation</button>
   </div>
 </div>
 
@@ -719,24 +731,29 @@ async function loadBalance() {
 /* ---------- payment panel (VietQR + PayPal) ---------- */
 let PAY_REQ_ID = null, PAY_AMOUNT = null, PAY_PLAN = null;
 function showPayPanel(info, plan) {
-  document.getElementById('payAmountLine').textContent = 'Nạp $' + info.amount + ' vào tài khoản NFlashX';
-  const hasBank = !!info.vietqr, hasPp = !!info.paypal;
+  document.getElementById('payAmountLine').textContent = 'Top up $' + info.amount + ' to your NFlashX account';
+  const hasBank = !!info.vietqr, hasPp = !!info.paypal, hasUsdt = !!info.usdt;
   document.getElementById('tabBank').style.display = hasBank ? '' : 'none';
   document.getElementById('tabPaypal').style.display = hasPp ? '' : 'none';
+  document.getElementById('tabUsdt').style.display = hasUsdt ? '' : 'none';
   if (hasBank) {
     document.getElementById('payQR').src = info.vietqr;
     document.getElementById('payName').textContent = info.name || '';
     document.getElementById('payAcc').textContent = info.account || '';
     const vndEl = document.getElementById('payAmtVnd');
-    if (vndEl) vndEl.textContent = (info.vnd || 0).toLocaleString('vi-VN') + ' đ';
+    if (vndEl) vndEl.textContent = (info.vnd || 0).toLocaleString('vi-VN') + ' VND';
     const usdEl = document.getElementById('payAmtUsd');
-    if (usdEl && info.rate) usdEl.textContent = '(≈ $' + info.amount + ' · 1$ = ' + Number(info.rate).toLocaleString('vi-VN') + 'đ)';
+    if (usdEl && info.rate) usdEl.textContent = '(≈ $' + info.amount + ' · $1 = ' + Number(info.rate).toLocaleString('vi-VN') + ' VND)';
+  }
+  if (hasUsdt) {
+    document.getElementById('payUsdtAddr').textContent = info.usdt;
+    document.getElementById('payUsdtAmt').textContent = info.amount;
   }
   document.getElementById('payMemo').textContent = info.memo;
   PAY_REQ_ID = info.memo.replace(/^NFX-/, '');
   PAY_AMOUNT = info.amount; PAY_PLAN = plan || null;
   document.getElementById('payPpAmount').textContent = '$' + info.amount;
-  payTab(hasBank ? 'bank' : 'paypal');
+  payTab(hasBank ? 'bank' : (hasUsdt ? 'usdt' : 'paypal'));
   document.getElementById('payBackdrop').style.display = 'flex';
   if (hasPp) initPaypalSdk();
 }
@@ -744,15 +761,19 @@ function payTab(which) {
   document.getElementById('payBank').style.display = which === 'bank' ? 'block' : 'none';
   const pp = document.getElementById('payPaypal');
   if (pp) pp.style.display = which === 'paypal' ? 'block' : 'none';
+  const us = document.getElementById('payUsdt');
+  if (us) us.style.display = which === 'usdt' ? 'block' : 'none';
   const on = 'background:linear-gradient(92deg,#0ea86f,#25e39a);color:#03130c;border:none;border-radius:10px;padding:8px 16px;font-weight:700;font-size:12.5px;cursor:pointer';
   const off = 'background:rgba(255,255,255,.06);color:#96a3b2;border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:8px 16px;font-weight:700;font-size:12.5px;cursor:pointer';
   document.getElementById('tabBank').style.cssText = which === 'bank' ? on : off;
   const tp = document.getElementById('tabPaypal');
   if (tp) tp.style.cssText = which === 'paypal' ? on : off;
+  const tu = document.getElementById('tabUsdt');
+  if (tu) tu.style.cssText = which === 'usdt' ? on : off;
 }
 async function startPaypal() {
   const b = document.getElementById('payPpBtn');
-  b.disabled = true; b.textContent = 'Đang tạo lệnh…';
+  b.disabled = true; b.textContent = 'Creating order…';
   try {
     const r = await api('paypal-create', { token: sess.token, amount: PAY_AMOUNT, plan: PAY_PLAN });
     location.href = r.approve_url;   // redirect sang PayPal
@@ -789,13 +810,13 @@ async function initPaypalSdk() {
         const r = await api('paypal-sdk-capture', { token: sess.token, orderID: data.orderID, request_id: PP_REQ_ID });
         closePayPanel();
         if (r.amount && r.balance != null) {
-          alert('✓ Thanh toán thành công — đã cộng $' + r.amount + '. Số dư hiện tại: $' + r.balance);
+          alert('✓ Payment successful — $' + r.amount + ' added. Current balance: $' + r.balance);
         } else {
-          alert('✓ Đã cộng $' + r.amount + ' vào số dư.');
+          alert('✓ Added $' + r.amount + ' to your balance.');
         }
         try { const me = await api('me', { token: sess.token }); ME = me.user; route(); } catch (_) {}
       },
-      onCancel: () => { alert('Đã huỷ thanh toán — không trừ tiền.'); },
+      onCancel: () => { alert('Payment cancelled — you were not charged.'); },
       onError: (err) => {
         console.warn(err);
         document.getElementById('ppFallback').style.display = 'block';
@@ -809,12 +830,12 @@ async function initPaypalSdk() {
 }
 async function submitPayTxid() {
   const tx = document.getElementById('payTxid').value.trim();
-  if (!tx) return alert('Dán TXID (transaction hash) từ ví/sàn của bạn vào.');
+  if (!tx) return alert('Paste the TXID (transaction hash) from your wallet or exchange.');
   const b = document.getElementById('payTxidBtn');
   b.disabled = true; b.textContent = 'Submitting…';
   try {
     await api('topup-txid', { token: sess.token, id: PAY_REQ_ID, txid: tx });
-    alert('TXID submitted — admin sẽ đối chiếu trên Tronscan và Approve.');
+    alert('TXID submitted — the admin will verify it on Tronscan.');
     closePayPanel();
   } catch (e) { alert(e.message); }
   b.disabled = false; b.textContent = 'Submit TXID';
