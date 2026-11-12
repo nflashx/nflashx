@@ -6,3 +6,10 @@ __pycache__/
 secrets.env
 
 *.exe
+admin.html
+NFlashX Control.pyw
+Khoi dong NFlashX (admin).bat
+start_web.bat
+AUTH-SETUP.md
+tools/
+account.html

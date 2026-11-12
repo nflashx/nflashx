@@ -20,7 +20,6 @@ NFlashX 1.0 is a self-hosted, OpenAI-compatible API that serves **chat, image ge
 | 🔑 Platform (keys, balance, usage) | **https://nflashx.cc.cd/platform.html** |
 | 💬 Chat playground | **https://nflashx.cc.cd/chat.html** |
 | 🖼 Vision playground | **https://nflashx.cc.cd/playground.html** |
-| 🛠 Admin console | **https://nflashx.cc.cd/admin.html** |
 
 ---
 
@@ -114,16 +113,14 @@ nflashx/
 ├── chat.html               # chat playground
 ├── playground.html         # vision playground
 ├── login.html              # signup / login (email, Google, GitHub)
-├── admin.html              # admin console (settings, users, payments)
 ├── css/                    # styles.css + landing.css + docs-override.css
 ├── js/                     # app.js, docs.js, auth-modal.js
 ├── assets/                 # logo, artwork, galleries
 ├── robots.txt / sitemap.xml
-├── start_web.bat           # Windows launcher
-└── NFlashX Control.pyw     # legacy tray control app
+└──     # legacy tray control app
 ```
 
-The native Rust panel lives in a separate repo/directory (`NFlashX Panel.exe`).
+The native Rust control panel (admin tooling) is kept in a private repo.
 
 ---
 
