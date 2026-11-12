@@ -11,7 +11,7 @@ An OpenAI-compatible multimodal AI API, built by [NowayDev](https://nflashx.cc.c
 
 ## What is NFlashX?
 
-NFlashX 1.0 is a self-hosted, OpenAI-compatible API that serves **chat, image generation and video** through a single key — with a free tier, prepaid billing, an admin console and an upstream key pool that rotates automatically.
+NFlashX 1.0 is a self-hosted, OpenAI-compatible API that serves **chat, image generation and video** through a single key — with a free tier, prepaid billing and an upstream key pool that rotates automatically.
 
 | | |
 |---|---|
@@ -30,10 +30,9 @@ NFlashX 1.0 is a self-hosted, OpenAI-compatible API that serves **chat, image ge
 - **Pro tier** — 30 requests/min, 8K output, pay-as-you-go at $0.40 / $0.70 per 1M tokens
 - **Upstream key pool** — round-robin rotation on every request, automatic cooldown + failover on 401 / 402 / 429
 - **True streaming** — SSE passthrough, first token in ~1s; upstream reasoning traces are filtered out
-- **Billing built in** — USD balance, usage metering, VietQR / USDT (TRC20) / PayPal top-ups, admin approval
-- **Auth** — email + verification code, Google OAuth, GitHub OAuth, admin-managed sessions
+- **Billing built in** — USD balance, usage metering, VietQR / USDT (TRC20) / PayPal top-ups, manual review
+- **Auth** — email + verification code, Google OAuth, GitHub OAuth, persistent sessions
 - **Zero dependencies** — one Python file (`server.py`), stdlib only
-- **Native control panel** — `NFlashX Panel` (Rust, Win32, zero crates) for live status, admin auto-login and key-pool management
 
 ---
 
@@ -91,7 +90,7 @@ Cloudflare Worker  (custom domain: nflashx.cc.cd, TLS, 302 for legacy hosts)
       ▼
 InstaBox microVM   (nflashx.cc.cd origin, 4 vCPU / 8 GB)
       │
-      ├── server.py — static site + auth + billing + admin + API proxy
+      ├── server.py — static site + auth + billing + API proxy
       │      │  key pool (round-robin, cooldown, failover)
       │      ▼
       └── Upstream AI API (agnes-2.5-flash engine)
@@ -120,8 +119,6 @@ nflashx/
 └──     # legacy tray control app
 ```
 
-The native Rust control panel (admin tooling) is kept in a private repo.
-
 ---
 
 ## Self-hosting
@@ -147,7 +144,7 @@ Optional: `data/` holds runtime state (created automatically):
 | `data/nflashx.db` | SQLite: API keys + usage log |
 | `data/admin_settings.json` | runtime settings (rate limits, caps, personas) |
 | `data/agnes_keys.json` | upstream key pool |
-| `data/payment_config.json` / `paypal_config.json` | payout accounts (admin console) |
+| `data/payment_config.json` / `paypal_config.json` | payout accounts (set via dashboard) |
 | `data/mail_config.json` | SMTP for notifications |
 
 ---
